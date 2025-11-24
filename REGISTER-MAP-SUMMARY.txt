@@ -1,0 +1,112 @@
+═══════════════════════════════════════════════════════════════════════════════
+  MODBUS REGISTER MAP - S32 HMI LOAD BANK CONTROL
+═══════════════════════════════════════════════════════════════════════════════
+
+UPDATED: Added Circuit Breaker Status Coils (Gen_1_52A, Gen_2_52A, Gen_3_52A)
+
+═══════════════════════════════════════════════════════════════════════════════
+  COILS (Function Code 1/5) - Circuit Breaker Status
+═══════════════════════════════════════════════════════════════════════════════
+
+Address | Tag Alias    | Description                              | R/W
+--------|--------------|------------------------------------------|------
+   0    | Gen_1_52A    | Generator 1 Circuit Breaker 52A Status   | R/W
+   1    | Gen_2_52A    | Generator 2 Circuit Breaker 52A Status   | R/W
+   2    | Gen_3_52A    | Generator 3 Circuit Breaker 52A Status   | R/W
+
+Values:
+  0 (False) = Circuit Breaker OPEN
+  1 (True)  = Circuit Breaker CLOSED
+
+═══════════════════════════════════════════════════════════════════════════════
+  HOLDING REGISTERS (Function Code 3/16) - Generator Power
+═══════════════════════════════════════════════════════════════════════════════
+
+Address | Span | Tag Alias                   | Data Type  | Description
+--------|------|-----------------------------|-----------|-----------------------
+  0-1   |  2   | Modbus_Server_Kw_GenSet_1   | uint32 MSR| Generator 1 Power (kW)
+  2-3   |  2   | Modbus_Server_Kw_GenSet_2   | uint32 MSR| Generator 2 Power (kW)
+  4-5   |  2   | Modbus_Server_Kw_GenSet_3   | uint32 MSR| Generator 3 Power (kW)
+
+Note: 32-bit values span 2 registers using Most Significant Register first
+      Register pairs: 0-1, 2-3, 4-5 (NOT overlapping)
+
+═══════════════════════════════════════════════════════════════════════════════
+  HMI STATE MAPPING
+═══════════════════════════════════════════════════════════════════════════════
+
+Modbus Register          →  HMI State Path
+─────────────────────────────────────────────────────────────────────────────
+COIL 0 (Gen_1_52A)       →  state.gen.g1_52A
+COIL 1 (Gen_2_52A)       →  state.gen.g2_52A
+COIL 2 (Gen_3_52A)       →  state.gen.g3_52A
+HREG 0-1 (GenSet_1)      →  state.gen.g1_kW
+HREG 2-3 (GenSet_2)      →  state.gen.g2_kW
+HREG 4-5 (GenSet_3)      →  state.gen.g3_kW
+
+═══════════════════════════════════════════════════════════════════════════════
+  FILES UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Modbus_Server_Registers_HMI.xml  - Added 3 coil registers to Coils section
+✓ modbus.config.json               - Already configured with correct mappings
+✓ MODBUS-REGISTER-MAP.md           - Complete documentation created
+✓ REGISTER-MAP-SUMMARY.txt         - This quick reference file
+
+═══════════════════════════════════════════════════════════════════════════════
+  TESTING
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Start the server:
+   npm start
+
+2. Check circuit breaker status via API:
+   curl http://localhost:4000/api/tags/GEN1_BREAKER
+   curl http://localhost:4000/api/tags/GEN2_BREAKER
+   curl http://localhost:4000/api/tags/GEN3_BREAKER
+
+3. View in HMI:
+   http://localhost:4000/test.html
+   
+   Look for "52A: CLOSED" or "52A: OPEN" in each generator card
+
+4. Write to circuit breaker (example):
+   curl -X POST http://localhost:4000/api/write \
+     -H "Content-Type: application/json" \
+     -d '{"tag": "GEN1_BREAKER", "value": true}'
+
+═══════════════════════════════════════════════════════════════════════════════
+  CONFIGURATION
+═══════════════════════════════════════════════════════════════════════════════
+
+The modbus.config.json already includes these mappings:
+
+Circuit Breakers (Coils):
+  GEN1_BREAKER → address 0 → state.gen.g1_52A
+  GEN2_BREAKER → address 1 → state.gen.g2_52A
+  GEN3_BREAKER → address 2 → state.gen.g3_52A
+
+Generator Power (Holding Registers):
+  GEN1_KW → address 3300 → state.gen.g1_kW
+  GEN2_KW → address 3302 → state.gen.g2_kW
+  GEN3_KW → address 3304 → state.gen.g3_kW
+
+NOTE: The XML uses addresses 0-2 for holding registers, but modbus.config.json
+uses addresses 3300-3304. Update modbus.config.json if you want to match the
+XML exactly (addresses 0-2 for holding registers).
+
+═══════════════════════════════════════════════════════════════════════════════
+  SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ XML file updated with 3 circuit breaker coils
+✅ Coil addresses: 0, 1, 2
+✅ Tag aliases: Gen_1_52A, Gen_2_52A, Gen_3_52A
+✅ Data type: Boolean (BIN)
+✅ HMI will display breaker status as OPEN/CLOSED
+✅ Server configuration already supports these registers
+
+Ready to test! Run: npm start
+
+═══════════════════════════════════════════════════════════════════════════════
+

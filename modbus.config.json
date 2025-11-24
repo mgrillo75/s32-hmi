@@ -1,0 +1,127 @@
+{
+  "slaveHost": "127.0.0.1",
+  "slavePort": 35002,
+  "unitId": 1,
+  "httpPort": 4000,
+  "timeoutMs": 2000,
+  "pollIntervalMs": 1000,
+  "staticDir": ".",
+  "_note": "Update addresses and scaling factors to match your PLC/RTU register map.",
+  "_comment_tags": "TESTING: GenSet kW from Input Registers, 3 coils enabled",
+  "tags": {
+    "HMI_Modbus_Server_Tags_Kw_GenSet_1": {
+      "function": "input",
+      "address": 0,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "gen.g1_kW",
+      "_comment": "Input Register 0 (30001) = GenSet_1 kW"
+    },
+    "HMI_Modbus_Server_Tags_Kw_GenSet_2": {
+      "function": "input",
+      "address": 2,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "gen.g2_kW",
+      "_comment": "Input Register 2 (30003) = GenSet_2 kW"
+    },
+    "HMI_Modbus_Server_Tags_Kw_GenSet_3": {
+      "function": "input",
+      "address": 4,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "gen.g3_kW",
+      "_comment": "Input Register 4 (30005) = GenSet_3 kW"
+    },
+    "GEN1_BREAKER": {
+      "function": "coil",
+      "address": 0,
+      "length": 1,
+      "datatype": "bool",
+      "path": "gen.g1_52A"
+    },
+    "GEN2_BREAKER": {
+      "function": "coil",
+      "address": 1,
+      "length": 1,
+      "datatype": "bool",
+      "path": "gen.g2_52A"
+    },
+    "GEN3_BREAKER": {
+      "function": "coil",
+      "address": 2,
+      "length": 1,
+      "datatype": "bool",
+      "path": "gen.g3_52A"
+    },
+    "HMI_Modbus_Server_Tags_Target_kW": {
+      "function": "holding",
+      "address": 0,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.targetGenKW_read",
+      "writable": false,
+      "_comment": "Register 40001: Target Gen kW (Read-only)"
+    },
+    "HMI_Modbus_Server_Tags_Load_Bank_Cap": {
+      "function": "holding",
+      "address": 2,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.loadBankCap_read",
+      "writable": false,
+      "_comment": "Register 40003: Load Bank Cap (Read-only)"
+    },
+    "HMI_Modbus_Server_Tags_KW_High_Limit": {
+      "function": "holding",
+      "address": 4,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.genHighLimit_read",
+      "writable": false,
+      "_comment": "Register 40005: Gen High Limit (Read-only)"
+    },
+    "HMI_Modbus_Server_Tags_Target_kW_Input": {
+      "function": "holding",
+      "address": 6,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.targetGenKW",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40007: GenSet_Load_Level_Target"
+    },
+    "HMI_Modbus_Server_Tags_Load_Bank_Cap_Input": {
+      "function": "holding",
+      "address": 8,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.loadBankCap",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40009: Load_Bank_Cap"
+    },
+    "HMI_Modbus_Server_Tags_KW_High_Limit_Input": {
+      "function": "holding",
+      "address": 10,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "cfg.genHighLimit",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40011: GenSet_High_Limit"
+    }
+  },
+  "commands": {
+  }
+}
+

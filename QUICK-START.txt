@@ -1,0 +1,128 @@
+═══════════════════════════════════════════════════════════════════════════════
+  S32 HMI - MODBUS TCP MASTER - QUICK START
+═══════════════════════════════════════════════════════════════════════════════
+
+YOUR PROJECT IS NOW A MODBUS TCP MASTER (CLIENT)
+It will connect to your Modbus TCP slave device (PLC/RTU/Gateway)
+
+═══════════════════════════════════════════════════════════════════════════════
+  WHAT YOU HAVE
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Modbus TCP Master Server (server.js)
+  - Connects to YOUR Modbus slave device
+  - Polls registers automatically
+  - Exposes REST API for the HMI
+
+✓ Web-based HMI (test.html)
+  - Displays live data from your device
+  - Sends control commands
+  - Auto-updates every second
+
+✓ Configuration System (modbus.config.json)
+  - Maps Modbus registers to HMI state
+  - Configurable connection settings
+  - Supports multiple data types
+
+═══════════════════════════════════════════════════════════════════════════════
+  QUICK START (3 STEPS)
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Configure Your Device Connection
+─────────────────────────────────────────
+Edit: modbus.config.json
+
+Change these lines:
+  "slaveHost": "192.168.1.100",  ← Your PLC/RTU IP address
+  "slavePort": 502,               ← Modbus TCP port (usually 502)
+  "unitId": 1,                    ← Your device's slave ID
+
+STEP 2: Update Register Addresses
+──────────────────────────────────
+Edit the "tags" section in modbus.config.json to match your device's register map.
+
+Example:
+  "My_Tag": {
+    "function": "holding",    ← holding/input/coil/discrete
+    "address": 1000,          ← Register address (0-based)
+    "length": 2,              ← 1 for 16-bit, 2 for 32-bit
+    "datatype": "uint32",     ← uint16/int16/uint32/int32/float32/bool
+    "scale": 0.01,            ← Scaling factor
+    "path": "lb.measured_kW"  ← Where to store in state
+  }
+
+STEP 3: Test and Run
+────────────────────
+  npm run verify    ← Test connection first
+  npm start         ← Start the server
+  
+  Then open: http://localhost:4000/test.html
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMMANDS
+═══════════════════════════════════════════════════════════════════════════════
+
+npm install         Install dependencies (already done)
+npm run verify      Test connection to your Modbus device
+npm start           Start the Modbus master server
+npm run dev         Start with auto-restart on file changes
+
+═══════════════════════════════════════════════════════════════════════════════
+  ARCHITECTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+[Your PLC/RTU] ←──Modbus TCP──→ [This Server] ←──REST API──→ [Web Browser]
+   (Slave)          Port 502         Port 4000        http://localhost:4000
+
+The server acts as Modbus MASTER (client) and connects TO your device.
+Your device is the Modbus SLAVE (server).
+
+═══════════════════════════════════════════════════════════════════════════════
+  ENDPOINTS
+═══════════════════════════════════════════════════════════════════════════════
+
+http://localhost:4000/test.html           ← Open the HMI
+http://localhost:4000/healthz             ← Check connection status
+http://localhost:4000/api/state           ← View all data
+http://localhost:4000/api/tags            ← View tag cache
+
+═══════════════════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Connection fails?
+  ✓ Verify IP address in modbus.config.json
+  ✓ Ping your device: ping 192.168.1.100
+  ✓ Check firewall settings
+  ✓ Verify device is powered on
+
+"Illegal data address" error?
+  ✓ Register address doesn't exist
+  ✓ Check your device's register map
+  ✓ Remember: addresses are 0-based
+
+Values look wrong?
+  ✓ Check "scale" factor in config
+  ✓ Verify "datatype" (signed vs unsigned)
+  ✓ Check "length" (1 for 16-bit, 2 for 32-bit)
+
+═══════════════════════════════════════════════════════════════════════════════
+  NEXT STEPS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Read SETUP-GUIDE.md for detailed configuration instructions
+2. Read README.md for complete API documentation
+3. Update modbus.config.json with your device's register map
+4. Run "npm run verify" to test connection
+5. Run "npm start" to start the server
+6. Open http://localhost:4000/test.html in your browser
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Questions? Check the documentation files:
+  - README.md         Complete documentation
+  - SETUP-GUIDE.md    Step-by-step setup instructions
+  - modbus.config.json    Configuration file (edit this!)
+
+═══════════════════════════════════════════════════════════════════════════════
+

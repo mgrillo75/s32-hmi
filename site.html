@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Site Overview - Generator Facility</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg:#0a0a0a; 
+    --panel:#1a1a1a; 
+    --text:#e0e0e0; 
+    --accent:#4ea1ff;
+    --ok:#22c55e;
+    --warn:#ffb020;
+    --alarm:#ff4444;
+    --shadow: rgba(0, 0, 0, 0.8);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { 
+    height: 100%; 
+    background: var(--bg); 
+    color: var(--text); 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+  }
+  
+  .site-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header Bar */
+  .header {
+    background: linear-gradient(to bottom, rgba(26, 26, 26, 0.95), rgba(26, 26, 26, 0.85));
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-bottom: 2px solid rgba(78, 161, 255, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .header-info {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    font-size: 13px;
+  }
+  
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .status-ok { background: var(--ok); color: #000; }
+  .status-alarm { background: var(--alarm); color: #fff; animation: pulse-badge 1s infinite; }
+  
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  
+  /* Main Background Area */
+  .site-view {
+    flex: 1;
+    position: relative;
+    background-image: url('site1.PNG');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+  }
+  
+  /* Overlay for darkening background */
+  .site-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+  }
+  
+  /* Generator Overlay Zones */
+  .gen-zone {
+    position: absolute;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .gen-zone:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Generator Marker */
+  .gen-marker {
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent 70%);
+    border: 3px solid var(--ok);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.6), inset 0 0 20px rgba(34, 197, 94, 0.2);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+  }
+  
+  .gen-marker.alarm {
+    background: radial-gradient(circle, rgba(255, 68, 68, 0.5), transparent 70%);
+    border-color: var(--alarm);
+    box-shadow: 0 0 40px rgba(255, 68, 68, 0.8), inset 0 0 30px rgba(255, 68, 68, 0.3);
+    animation: flash-alarm 1s infinite;
+  }
+  
+  .gen-marker.offline {
+    background: radial-gradient(circle, rgba(102, 102, 102, 0.3), transparent 70%);
+    border-color: #666;
+    box-shadow: 0 0 20px rgba(102, 102, 102, 0.4), inset 0 0 15px rgba(102, 102, 102, 0.2);
+  }
+  
+  @keyframes flash-alarm {
+    0%, 100% { 
+      box-shadow: 0 0 40px rgba(255, 68, 68, 0.8), inset 0 0 30px rgba(255, 68, 68, 0.3);
+      border-width: 3px;
+    }
+    50% { 
+      box-shadow: 0 0 80px rgba(255, 68, 68, 1), inset 0 0 50px rgba(255, 68, 68, 0.5);
+      border-width: 5px;
+    }
+  }
+  
+  .gen-marker-icon {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  }
+  
+  .gen-marker-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    margin-top: 4px;
+  }
+  
+  .gen-marker-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    margin-top: 2px;
+  }
+  
+  /* Info Panel */
+  .info-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(26, 26, 26, 0.92);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(78, 161, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    min-width: 300px;
+    z-index: 50;
+  }
+  
+  .info-panel h2 {
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(78, 161, 255, 0.2);
+  }
+  
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 13px;
+  }
+  
+  .info-row:last-child {
+    border-bottom: none;
+  }
+  
+  .info-label {
+    color: #a0a0a0;
+    font-weight: 500;
+  }
+  
+  .info-value {
+    font-weight: 700;
+    color: var(--accent);
+  }
+  
+  .info-value.ok { color: var(--ok); }
+  .info-value.alarm { color: var(--alarm); animation: pulse-text 1s infinite; }
+  .info-value.offline { color: #666; }
+  
+  @keyframes pulse-text {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Alarm Banner */
+  .alarm-banner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(255, 68, 68, 0.95), rgba(255, 68, 68, 0.85));
+    backdrop-filter: blur(10px);
+    padding: 16px 24px;
+    border-top: 3px solid var(--alarm);
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    animation: slide-up 0.3s ease;
+  }
+  
+  .alarm-banner.active {
+    display: flex;
+  }
+  
+  @keyframes slide-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  .alarm-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .alarm-icon {
+    font-size: 28px;
+    animation: pulse-icon 1s infinite;
+  }
+  
+  @keyframes pulse-icon {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  
+  .alarm-text {
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  .alarm-details {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  
+  .alarm-dismiss {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .alarm-dismiss:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  /* Legend */
+  .legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(26, 26, 26, 0.92);
+    backdrop-filter: blur(15px);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(78, 161, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    z-index: 50;
+  }
+  
+  .legend-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 11px;
+  }
+  
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+  
+  .legend-color.ok { 
+    background: rgba(34, 197, 94, 0.3); 
+    border-color: var(--ok);
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  }
+  
+  .legend-color.alarm { 
+    background: rgba(255, 68, 68, 0.3); 
+    border-color: var(--alarm);
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+  }
+  
+  .legend-color.offline { 
+    background: rgba(102, 102, 102, 0.3); 
+    border-color: #666;
+  }
+  
+  /* Loading State */
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 200;
+  }
+  
+  .loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(78, 161, 255, 0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="site-container">
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      <span>🏭</span>
+      <span>POWER GENERATION FACILITY - SITE OVERVIEW</span>
+    </h1>
+    <div class="header-info">
+      <div>
+        <span style="color: #a0a0a0;">System:</span>
+        <span class="status-badge status-ok" id="system-status">ONLINE</span>
+      </div>
+      <div style="color: #a0a0a0;">
+        Mode: <span style="color: var(--accent); font-weight: 600;">SIMULATION</span>
+      </div>
+      <div style="color: #a0a0a0;">
+        Time: <span style="color: var(--text); font-weight: 600;" id="time">--:--:--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Site View -->
+  <div class="site-view">
+    <div class="site-overlay"></div>
+    
+    <!-- Generator Zones (positioned over facility buildings) -->
+    <!-- Gen 1 - Left building -->
+    <div class="gen-zone" id="gen1-zone" style="top: 35%; left: 20%;">
+      <div class="gen-marker" id="gen1-marker">
+        <div class="gen-marker-icon">⚡</div>
+        <div class="gen-marker-label">GEN-1</div>
+        <div class="gen-marker-value" id="gen1-value">2050 kW</div>
+      </div>
+    </div>
+
+    <!-- Gen 2 - Center building (ALARM) -->
+    <div class="gen-zone" id="gen2-zone" style="top: 40%; left: 45%;">
+      <div class="gen-marker alarm" id="gen2-marker">
+        <div class="gen-marker-icon">⚠</div>
+        <div class="gen-marker-label">GEN-2</div>
+        <div class="gen-marker-value" id="gen2-value">2080 kW</div>
+      </div>
+    </div>
+
+    <!-- Gen 3 - Right building (offline) -->
+    <div class="gen-zone" id="gen3-zone" style="top: 35%; left: 70%;">
+      <div class="gen-marker offline" id="gen3-marker">
+        <div class="gen-marker-icon">○</div>
+        <div class="gen-marker-label">GEN-3</div>
+        <div class="gen-marker-value" id="gen3-value">0 kW</div>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <h2>⚡ Generation Status</h2>
+      <div class="info-row">
+        <span class="info-label">Total Output</span>
+        <span class="info-value" id="total-output">4130 kW</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">GEN-1 Status</span>
+        <span class="info-value ok" id="gen1-status">ONLINE</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">GEN-2 Status</span>
+        <span class="info-value alarm" id="gen2-status">HIGH TEMP</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">GEN-3 Status</span>
+        <span class="info-value offline" id="gen3-status">OFFLINE</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Active Alarms</span>
+        <span class="info-value alarm" id="alarm-count">1</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Facility Load</span>
+        <span class="info-value" id="facility-load">85%</span>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-title">Status Indicators</div>
+      <div class="legend-item">
+        <div class="legend-color ok"></div>
+        <div>Normal Operation</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color alarm"></div>
+        <div>Alarm / Warning</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color offline"></div>
+        <div>Offline / Inactive</div>
+      </div>
+      <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 10px; color: #888;">
+        Click generator to toggle status
+      </div>
+    </div>
+
+    <!-- Alarm Banner -->
+    <div class="alarm-banner active" id="alarm-banner">
+      <div class="alarm-content">
+        <div class="alarm-icon">⚠</div>
+        <div>
+          <div class="alarm-text">GENERATOR 2 ALARM</div>
+          <div class="alarm-details">High Temperature Detected - Unit Operating Above Normal Parameters</div>
+        </div>
+      </div>
+      <button class="alarm-dismiss" onclick="dismissAlarm()">Acknowledge</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Simulation State
+const state = {
+  gen1: { kW: 2050, status: 'ONLINE', alarm: false, active: true },
+  gen2: { kW: 2080, status: 'HIGH TEMP', alarm: true, active: true },
+  gen3: { kW: 0, status: 'OFFLINE', alarm: false, active: false },
+  variation: 40,
+  alarmAcknowledged: false
+};
+
+// Update display
+function updateDisplay() {
+  // Update time
+  const now = new Date();
+  document.getElementById('time').textContent = now.toLocaleTimeString();
+
+  // Update generator values
+  document.getElementById('gen1-value').textContent = `${Math.round(state.gen1.kW)} kW`;
+  document.getElementById('gen2-value').textContent = `${Math.round(state.gen2.kW)} kW`;
+  document.getElementById('gen3-value').textContent = `${Math.round(state.gen3.kW)} kW`;
+
+  // Update status indicators
+  const gen1StatusEl = document.getElementById('gen1-status');
+  gen1StatusEl.textContent = state.gen1.status;
+  gen1StatusEl.className = 'info-value ' + (state.gen1.alarm ? 'alarm' : state.gen1.active ? 'ok' : 'offline');
+
+  const gen2StatusEl = document.getElementById('gen2-status');
+  gen2StatusEl.textContent = state.gen2.status;
+  gen2StatusEl.className = 'info-value ' + (state.gen2.alarm ? 'alarm' : state.gen2.active ? 'ok' : 'offline');
+
+  const gen3StatusEl = document.getElementById('gen3-status');
+  gen3StatusEl.textContent = state.gen3.status;
+  gen3StatusEl.className = 'info-value ' + (state.gen3.alarm ? 'alarm' : state.gen3.active ? 'ok' : 'offline');
+
+  // Update markers
+  updateMarker('gen1', state.gen1);
+  updateMarker('gen2', state.gen2);
+  updateMarker('gen3', state.gen3);
+
+  // Total output
+  const total = state.gen1.kW + state.gen2.kW + state.gen3.kW;
+  document.getElementById('total-output').textContent = `${Math.round(total)} kW`;
+
+  // Alarm count
+  const alarmCount = [state.gen1, state.gen2, state.gen3].filter(g => g.alarm).length;
+  document.getElementById('alarm-count').textContent = alarmCount;
+
+  // System status
+  const systemStatusEl = document.getElementById('system-status');
+  if (alarmCount > 0) {
+    systemStatusEl.textContent = 'ALARM';
+    systemStatusEl.className = 'status-badge status-alarm';
+  } else {
+    systemStatusEl.textContent = 'ONLINE';
+    systemStatusEl.className = 'status-badge status-ok';
+  }
+
+  // Alarm banner
+  const alarmBanner = document.getElementById('alarm-banner');
+  if (state.gen2.alarm && !state.alarmAcknowledged) {
+    alarmBanner.classList.add('active');
+  } else {
+    alarmBanner.classList.remove('active');
+  }
+}
+
+function updateMarker(genId, genState) {
+  const marker = document.getElementById(`${genId}-marker`);
+  const icon = marker.querySelector('.gen-marker-icon');
+  
+  marker.className = 'gen-marker';
+  
+  if (genState.alarm) {
+    marker.classList.add('alarm');
+    icon.textContent = '⚠';
+  } else if (genState.active) {
+    icon.textContent = '⚡';
+  } else {
+    marker.classList.add('offline');
+    icon.textContent = '○';
+  }
+}
+
+// Simulation loop
+function simulate() {
+  const jitter = () => (Math.random() - 0.5) * state.variation;
+
+  // Gen 1 - normal operation
+  if (state.gen1.active) {
+    state.gen1.kW = Math.max(0, 2050 + jitter());
+  } else {
+    state.gen1.kW = 0;
+  }
+
+  // Gen 2 - with alarm, slightly higher output
+  if (state.gen2.active) {
+    state.gen2.kW = Math.max(0, 2080 + jitter());
+  } else {
+    state.gen2.kW = 0;
+  }
+
+  // Gen 3 - offline
+  state.gen3.kW = 0;
+
+  updateDisplay();
+}
+
+// Dismiss alarm
+function dismissAlarm() {
+  state.alarmAcknowledged = true;
+  updateDisplay();
+}
+
+// Interactive toggles
+document.getElementById('gen1-zone').addEventListener('click', () => {
+  state.gen1.active = !state.gen1.active;
+  state.gen1.alarm = false;
+  state.gen1.status = state.gen1.active ? 'ONLINE' : 'OFFLINE';
+  updateDisplay();
+});
+
+document.getElementById('gen2-zone').addEventListener('click', () => {
+  state.gen2.alarm = !state.gen2.alarm;
+  state.gen2.status = state.gen2.alarm ? 'HIGH TEMP' : 'ONLINE';
+  state.alarmAcknowledged = false;
+  updateDisplay();
+});
+
+document.getElementById('gen3-zone').addEventListener('click', () => {
+  state.gen3.active = !state.gen3.active;
+  state.gen3.alarm = false;
+  state.gen3.status = state.gen3.active ? 'ONLINE' : 'OFFLINE';
+  updateDisplay();
+});
+
+// Random alarm simulation (occasionally trigger/clear Gen 2 alarm)
+setInterval(() => {
+  if (Math.random() < 0.1) { // 10% chance every 10 seconds
+    state.gen2.alarm = !state.gen2.alarm;
+    state.gen2.status = state.gen2.alarm ? 'HIGH TEMP' : 'ONLINE';
+    state.alarmAcknowledged = false;
+  }
+}, 10000);
+
+// Start simulation
+setInterval(simulate, 1000);
+updateDisplay();
+</script>
+
+</body>
+</html>

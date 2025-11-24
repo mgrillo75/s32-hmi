@@ -1,0 +1,22 @@
+{
+  "name": "s32-hmi-modbus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Modbus TCP master bridge for S32 HMI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "verify": "node verify-connection.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "modbus-serial": "^8.0.23",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
+

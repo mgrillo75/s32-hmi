@@ -1,0 +1,1115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RTACModule>
+  <TagList>
+    <ExportSource>
+      <Schema>39</Schema>
+      <DeviceMOT>3505</DeviceMOT>
+    </ExportSource>
+    <Name>Modbus_Server_Registers_HMI</Name>
+    <TagListType>Modbus</TagListType>
+    <SettingPages>
+      <SettingPage>
+        <Name>Coils</Name>
+        <Commands>
+          <AddItems>
+            <Quantity>3</Quantity>
+          </AddItems>
+        </Commands>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.COIL_00000</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>BIN</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Gen_1_52A</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value>Generator 1 Circuit Breaker 52A Status (Open/Closed)</Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.COIL_00001</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>BIN</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Gen_2_52A</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>1</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>1</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value>Generator 2 Circuit Breaker 52A Status (Open/Closed)</Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.COIL_00002</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>BIN</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Gen_3_52A</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>2</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>2</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value>Generator 3 Circuit Breaker 52A Status (Open/Closed)</Value>
+          </Setting>
+        </Row>
+      </SettingPage>
+      <SettingPage>
+        <Name>Discrete Inputs</Name>
+      </SettingPage>
+      <SettingPage>
+        <Name>Holding Registers</Name>
+        <Commands>
+          <AddItems>
+            <Quantity>3</Quantity>
+          </AddItems>
+        </Commands>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00000</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>INC</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_1</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>1</Value>
+          </Setting>
+          <Setting>
+            <Column>Variation</Column>
+            <Value>32 bit unsigned MSR</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00000.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>INS</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_1.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>1</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Status Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Max Value</Column>
+            <Value>2147483647</Value>
+          </Setting>
+          <Setting>
+            <Column>H H Limit</Column>
+            <Value>1932735282</Value>
+          </Setting>
+          <Setting>
+            <Column>H Limit</Column>
+            <Value>1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L Limit</Column>
+            <Value>-1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L L Limit</Column>
+            <Value>-1932735283</Value>
+          </Setting>
+          <Setting>
+            <Column>Min Value</Column>
+            <Value>-2147483648</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00000.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>operINC</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_1.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>1</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Control Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00001</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>INC</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_2</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>2</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>3</Value>
+          </Setting>
+          <Setting>
+            <Column>Variation</Column>
+            <Value>32 bit unsigned MSR</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00001.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>INS</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_2.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>2</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>3</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Status Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Max Value</Column>
+            <Value>2147483647</Value>
+          </Setting>
+          <Setting>
+            <Column>H H Limit</Column>
+            <Value>1932735282</Value>
+          </Setting>
+          <Setting>
+            <Column>H Limit</Column>
+            <Value>1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L Limit</Column>
+            <Value>-1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L L Limit</Column>
+            <Value>-1932735283</Value>
+          </Setting>
+          <Setting>
+            <Column>Min Value</Column>
+            <Value>-2147483648</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00001.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>operINC</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_2.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>2</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>3</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Control Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting>
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00002</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Type</Column>
+            <Value>INC</Value>
+          </Setting>
+          <Setting>
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_3</Value>
+          </Setting>
+          <Setting>
+            <Column>Register Address Start</Column>
+            <Value>4</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>5</Value>
+          </Setting>
+          <Setting>
+            <Column>Variation</Column>
+            <Value>32 bit unsigned MSR</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00002.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>INS</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_3.status</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>4</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>5</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Status Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Control Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Max Value</Column>
+            <Value>2147483647</Value>
+          </Setting>
+          <Setting>
+            <Column>H H Limit</Column>
+            <Value>1932735282</Value>
+          </Setting>
+          <Setting>
+            <Column>H Limit</Column>
+            <Value>1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L Limit</Column>
+            <Value>-1717986918</Value>
+          </Setting>
+          <Setting>
+            <Column>L L Limit</Column>
+            <Value>-1932735283</Value>
+          </Setting>
+          <Setting>
+            <Column>Min Value</Column>
+            <Value>-2147483648</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+        <Row>
+          <Setting enabled="false">
+            <Column>Enable</Column>
+            <Value>True</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Name</Column>
+            <Value>Modbus_Server_Registers_HMI.HREG_00002.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Type</Column>
+            <Value>operINC</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Tag Alias</Column>
+            <Value>Modbus_Server_Kw_GenSet_3.oper</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Start</Column>
+            <Value>4</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Register Address Stop</Column>
+            <Value>5</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Variation</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Bit Reference</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Status Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting>
+            <Column>Control Value</Column>
+            <Value>0</Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Set Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Inst Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Magnitude</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Zero Deadband</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Max Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>H Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>L L Limit</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Min Value</Column>
+            <Value></Value>
+          </Setting>
+          <Setting enabled="false">
+            <Column>Comment</Column>
+            <Value></Value>
+          </Setting>
+        </Row>
+      </SettingPage>
+      <SettingPage>
+        <Name>Input Registers</Name>
+      </SettingPage>
+    </SettingPages>
+  </TagList>
+</RTACModule>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Power System Single-Line Diagram</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg:#1a1a1a; 
+    --panel:#2d2d2d; 
+    --text:#e0e0e0; 
+    --accent:#4ea1ff;
+    --grid:#3a3a3a;
+    --voltage-high:#ff4d4d;
+    --voltage-mid:#ffb020;
+    --voltage-low:#1db954;
+    --gen-active:#22c55e;
+    --gen-inactive:#666;
+  }
+  * { box-sizing: border-box; }
+  html, body { 
+    height: 100%; 
+    background: var(--bg); 
+    color: var(--text); 
+    margin: 0; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .header {
+    background: var(--panel);
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--grid);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .header-info {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+  }
+  .badge {
+    background: var(--gen-active);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .diagram-container {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    background: 
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      linear-gradient(var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  svg {
+    display: block;
+    margin: 20px auto;
+  }
+  .bus-line {
+    stroke: var(--text);
+    stroke-width: 3;
+    fill: none;
+  }
+  .bus-34kv {
+    stroke: var(--voltage-high);
+    stroke-width: 4;
+  }
+  .bus-13kv {
+    stroke: var(--voltage-mid);
+    stroke-width: 4;
+  }
+  .bus-4kv {
+    stroke: var(--voltage-low);
+    stroke-width: 3;
+  }
+  .component {
+    stroke: var(--text);
+    stroke-width: 2;
+    fill: none;
+  }
+  .breaker-closed {
+    fill: var(--gen-active);
+    stroke: var(--gen-active);
+  }
+  .breaker-open {
+    fill: var(--gen-inactive);
+    stroke: var(--gen-inactive);
+  }
+  .transformer {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 2;
+  }
+  .generator {
+    stroke: var(--text);
+    stroke-width: 2;
+  }
+  .gen-active {
+    fill: var(--gen-active);
+    stroke: var(--gen-active);
+  }
+  .gen-inactive {
+    fill: var(--gen-inactive);
+    stroke: var(--gen-inactive);
+  }
+  .label {
+    fill: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .label-small {
+    fill: var(--text);
+    font-size: 11px;
+    text-anchor: middle;
+  }
+  .value {
+    fill: var(--accent);
+    font-size: 16px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+  .voltage-label {
+    fill: var(--voltage-high);
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .ground {
+    stroke: var(--text);
+    stroke-width: 2;
+    fill: none;
+  }
+  .flag {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    width: 80px;
+    height: auto;
+  }
+  .legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: var(--panel);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--grid);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+    font-size: 12px;
+  }
+  .legend-color {
+    width: 30px;
+    height: 3px;
+  }
+  .panel-list {
+    position: absolute;
+    bottom: 20px;
+    right: 120px;
+    background: var(--panel);
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--grid);
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    color: var(--gen-active);
+  }
+  .panel-list div {
+    margin: 3px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>⚡ Power System Single-Line Diagram</h1>
+    <div class="header-info">
+      <div>System: <span class="badge">ONLINE</span></div>
+      <div>Mode: <span style="color: var(--accent);">SIMULATION</span></div>
+      <div>Time: <span id="time">--:--:--</span></div>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg width="1400" height="800" viewBox="0 0 1400 800">
+      <!-- 34.5 kV Bus -->
+      <line x1="200" y1="100" x2="1200" y2="100" class="bus-line bus-34kv" />
+      <text x="1220" y="105" class="voltage-label">34.5kV</text>
+
+      <!-- Main Transformers (Top) -->
+      <!-- Transformer 1 -->
+      <g id="xfmr1">
+        <line x1="250" y1="100" x2="250" y2="140" class="component" />
+        <circle cx="250" cy="150" r="12" class="transformer" />
+        <circle cx="250" cy="170" r="12" class="transformer" />
+        <text x="250" y="135" class="label-small">8MVA</text>
+        <text x="290" y="160" class="label-small">1</text>
+      </g>
+
+      <!-- Transformer 2 -->
+      <g id="xfmr2">
+        <line x1="350" y1="100" x2="350" y2="140" class="component" />
+        <circle cx="350" cy="150" r="12" class="transformer" />
+        <circle cx="350" cy="170" r="12" class="transformer" />
+        <text x="350" y="135" class="label-small">3MVA</text>
+        <text x="390" y="160" class="label-small">2</text>
+      </g>
+
+      <!-- 13.8 kV Bus (Lower) -->
+      <line x1="200" y1="240" x2="1200" y2="240" class="bus-line bus-13kv" />
+      <text x="1220" y="245" class="voltage-label">13.8kV</text>
+
+      <!-- Connections to 13.8kV bus -->
+      <line x1="250" y1="182" x2="250" y2="240" class="component" />
+      <line x1="350" y1="182" x2="350" y2="240" class="component" />
+
+      <!-- Generator Feeders -->
+      <!-- Gen 1 -->
+      <g id="gen1">
+        <line x1="500" y1="240" x2="500" y2="280" class="component" />
+        <!-- Breaker 52A -->
+        <rect x="495" y="290" width="10" height="20" id="br1" class="breaker-closed" />
+        <line x1="500" y1="310" x2="500" y2="340" class="component" />
+        <rect x="485" y="345" width="30" height="25" class="component" />
+        <line x1="485" y1="357" x2="515" y2="357" class="component" />
+        <circle cx="500" cy="390" r="20" id="gen1-circle" class="generator gen-active" />
+        <text x="500" y="396" style="fill: #000; font-size: 16px; font-weight: 700; text-anchor: middle;">G</text>
+        <text x="500" y="425" class="label">GEN-1</text>
+        <text x="500" y="445" class="value" id="g1-kw">0 kW</text>
+        <text x="500" y="462" class="label-small">52A: <tspan id="g1-52a">CLOSED</tspan></text>
+        <text x="500" y="478" class="label-small" id="g1-volt">4.8kV</text>
+      </g>
+
+      <!-- Gen 2 -->
+      <g id="gen2">
+        <line x1="650" y1="240" x2="650" y2="280" class="component" />
+        <!-- Breaker 52A -->
+        <rect x="645" y="290" width="10" height="20" id="br2" class="breaker-closed" />
+        <line x1="650" y1="310" x2="650" y2="340" class="component" />
+        <rect x="635" y="345" width="30" height="25" class="component" />
+        <line x1="635" y1="357" x2="665" y2="357" class="component" />
+        <circle cx="650" cy="390" r="20" id="gen2-circle" class="generator gen-active" />
+        <text x="650" y="396" style="fill: #000; font-size: 16px; font-weight: 700; text-anchor: middle;">G</text>
+        <text x="650" y="425" class="label">GEN-2</text>
+        <text x="650" y="445" class="value" id="g2-kw">0 kW</text>
+        <text x="650" y="462" class="label-small">52A: <tspan id="g2-52a">CLOSED</tspan></text>
+        <text x="650" y="478" class="label-small" id="g2-volt">4.92kV</text>
+      </g>
+
+      <!-- Gen 3 -->
+      <g id="gen3">
+        <line x1="800" y1="240" x2="800" y2="280" class="component" />
+        <!-- Breaker 52A -->
+        <rect x="795" y="290" width="10" height="20" id="br3" class="breaker-open" />
+        <line x1="800" y1="310" x2="800" y2="340" class="component" />
+        <rect x="785" y="345" width="30" height="25" class="component" />
+        <line x1="785" y1="357" x2="815" y2="357" class="component" />
+        <circle cx="800" cy="390" r="20" id="gen3-circle" class="generator gen-inactive" />
+        <text x="800" y="396" style="fill: #000; font-size: 16px; font-weight: 700; text-anchor: middle;">G</text>
+        <text x="800" y="425" class="label">GEN-3</text>
+        <text x="800" y="445" class="value" id="g3-kw">0 kW</text>
+        <text x="800" y="462" class="label-small">52A: <tspan id="g3-52a">OPEN</tspan></text>
+        <text x="800" y="478" class="label-small" id="g3-volt">0kV</text>
+      </g>
+
+      <!-- Static Compensator (SC) -->
+      <g id="sc">
+        <line x1="1050" y1="240" x2="1050" y2="280" class="component" />
+        <rect x="1045" y="290" width="10" height="20" class="breaker-closed" />
+        <line x1="1050" y1="310" x2="1050" y2="340" class="component" />
+        <circle cx="1050" cy="365" r="20" class="generator gen-active" />
+        <text x="1050" y="371" style="fill: #000; font-size: 14px; font-weight: 700; text-anchor: middle;">SC</text>
+        <text x="1050" y="395" class="label-small">Static Comp</text>
+      </g>
+
+      <!-- Auxiliary Systems -->
+      <!-- Left side - 2.5 MW AUX FOR SC -->
+      <g id="aux-left">
+        <line x1="200" y1="240" x2="200" y2="320" class="component" />
+        <line x1="180" y1="320" x2="220" y2="320" class="component" />
+        <line x1="185" y1="325" x2="215" y2="325" class="component" />
+        <line x1="190" y1="330" x2="210" y2="330" class="component" />
+        <text x="200" y="355" class="label-small">2.5 MW</text>
+        <text x="200" y="370" class="label-small">AUX FOR SC</text>
+      </g>
+
+      <!-- GEN AUX (between Gen 2 and 3) -->
+      <g id="gen-aux">
+        <line x1="725" y1="240" x2="725" y2="310" class="component" />
+        <rect x="705" y="315" width="40" height="30" style="fill: none; stroke: var(--accent); stroke-width: 2;" />
+        <text x="725" y="335" style="fill: var(--accent); font-size: 12px; font-weight: 600; text-anchor: middle;">GEN</text>
+        <text x="725" y="350" style="fill: var(--accent); font-size: 12px; font-weight: 600; text-anchor: middle;">AUX</text>
+        <line x1="725" y1="345" x2="725" y2="380" class="component" />
+        <text x="725" y="395" class="label-small" id="aux-kw">250kVA</text>
+      </g>
+
+      <!-- Ground symbols -->
+      <g class="ground">
+        <line x1="200" y1="380" x2="200" y2="400" />
+        <line x1="185" y1="400" x2="215" y2="400" stroke-width="2" />
+        <line x1="190" y1="405" x2="210" y2="405" stroke-width="2" />
+        <line x1="195" y1="410" x2="205" y2="410" stroke-width="2" />
+      </g>
+
+      <g class="ground">
+        <line x1="725" y1="380" x2="725" y2="405" />
+        <line x1="710" y1="405" x2="740" y2="405" stroke-width="2" />
+        <line x1="715" y1="410" x2="735" y2="410" stroke-width="2" />
+        <line x1="720" y1="415" x2="730" y2="415" stroke-width="2" />
+      </g>
+
+      <!-- Power flow indicators (animated) -->
+      <g id="power-flow">
+        <circle cx="500" cy="240" r="4" class="power-pulse" style="fill: var(--gen-active);">
+          <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="650" cy="240" r="4" class="power-pulse" style="fill: var(--gen-active);">
+          <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+      </g>
+
+      <!-- Total Power Display -->
+      <g id="total-power">
+        <rect x="550" y="30" width="220" height="50" style="fill: var(--panel); stroke: var(--accent); stroke-width: 2; rx: 8;" />
+        <text x="660" y="52" style="fill: var(--text); font-size: 12px; text-anchor: middle;">TOTAL GEN OUTPUT</text>
+        <text x="660" y="72" class="value" id="total-kw" style="font-size: 22px;">0 kW</text>
+      </g>
+    </svg>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div style="font-weight: 700; margin-bottom: 8px;">Voltage Levels</div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: var(--voltage-high);"></div>
+        <div>34.5 kV</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: var(--voltage-mid);"></div>
+        <div>13.8 kV</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: var(--voltage-low);"></div>
+        <div>4.8 kV</div>
+      </div>
+      <div style="font-weight: 700; margin: 12px 0 8px 0;">Status</div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: var(--gen-active);"></div>
+        <div>Active / Closed</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: var(--gen-inactive);"></div>
+        <div>Inactive / Open</div>
+      </div>
+    </div>
+
+    <!-- Panel List -->
+    <div class="panel-list">
+      <div>1-787-PQVEI2</div>
+      <div>2-7006-PQVEI2</div>
+      <div>3-751+735</div>
+      <div>4-751A PQVEI</div>
+      <div>5-?51A</div>
+      <div>6-7006PQVEI</div>
+    </div>
+
+    <!-- Texas Flag -->
+    <svg class="flag" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+      <rect width="900" height="600" fill="#002868"/>
+      <rect width="900" height="300" y="300" fill="#fff"/>
+      <rect width="900" height="300" y="300" fill="#bf0a30"/>
+      <rect width="300" height="600" fill="#002868"/>
+      <polygon points="150,180 176,258 258,258 192,304 218,382 150,336 82,382 108,304 42,258 124,258" fill="#fff"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+// Simulation State
+const state = {
+  gen1: { kW: 0, voltage: 4.8, cb52A: true, active: true },
+  gen2: { kW: 0, voltage: 4.92, cb52A: true, active: true },
+  gen3: { kW: 0, voltage: 0, cb52A: false, active: false },
+  targetPerGen: 2050,
+  variation: 40
+};
+
+// Update display
+function updateDisplay() {
+  // Gen 1
+  document.getElementById('g1-kw').textContent = `${state.gen1.kW.toFixed(0)} kW`;
+  document.getElementById('g1-52a').textContent = state.gen1.cb52A ? 'CLOSED' : 'OPEN';
+  document.getElementById('g1-volt').textContent = state.gen1.active ? `${state.gen1.voltage}kV` : '0kV';
+  
+  // Gen 2
+  document.getElementById('g2-kw').textContent = `${state.gen2.kW.toFixed(0)} kW`;
+  document.getElementById('g2-52a').textContent = state.gen2.cb52A ? 'CLOSED' : 'OPEN';
+  document.getElementById('g2-volt').textContent = state.gen2.active ? `${state.gen2.voltage}kV` : '0kV';
+  
+  // Gen 3
+  document.getElementById('g3-kw').textContent = `${state.gen3.kW.toFixed(0)} kW`;
+  document.getElementById('g3-52a').textContent = state.gen3.cb52A ? 'CLOSED' : 'OPEN';
+  document.getElementById('g3-volt').textContent = state.gen3.active ? `${state.gen3.voltage}kV` : '0kV';
+  
+  // Update visual states
+  updateVisualState('gen1-circle', 'br1', state.gen1);
+  updateVisualState('gen2-circle', 'br2', state.gen2);
+  updateVisualState('gen3-circle', 'br3', state.gen3);
+  
+  // Total power
+  const total = state.gen1.kW + state.gen2.kW + state.gen3.kW;
+  document.getElementById('total-kw').textContent = `${total.toFixed(0)} kW`;
+  
+  // Update time
+  const now = new Date();
+  document.getElementById('time').textContent = now.toLocaleTimeString();
+}
+
+function updateVisualState(genId, breakerId, genState) {
+  const genCircle = document.getElementById(genId);
+  const breaker = document.getElementById(breakerId);
+  
+  if (genState.active && genState.cb52A) {
+    genCircle.classList.remove('gen-inactive');
+    genCircle.classList.add('gen-active');
+    breaker.classList.remove('breaker-open');
+    breaker.classList.add('breaker-closed');
+  } else {
+    genCircle.classList.remove('gen-active');
+    genCircle.classList.add('gen-inactive');
+    breaker.classList.remove('breaker-closed');
+    breaker.classList.add('breaker-open');
+  }
+}
+
+// Simulation loop
+function simulate() {
+  const jitter = () => (Math.random() - 0.5) * state.variation;
+  
+  // Gen 1
+  if (state.gen1.active && state.gen1.cb52A) {
+    state.gen1.kW = Math.max(0, state.targetPerGen + jitter());
+  } else {
+    state.gen1.kW = 0;
+  }
+  
+  // Gen 2
+  if (state.gen2.active && state.gen2.cb52A) {
+    state.gen2.kW = Math.max(0, state.targetPerGen + jitter());
+  } else {
+    state.gen2.kW = 0;
+  }
+  
+  // Gen 3
+  if (state.gen3.active && state.gen3.cb52A) {
+    state.gen3.kW = Math.max(0, state.targetPerGen + jitter());
+  } else {
+    state.gen3.kW = 0;
+  }
+  
+  updateDisplay();
+}
+
+// Interactive controls - click to toggle breakers
+document.getElementById('gen1').style.cursor = 'pointer';
+document.getElementById('gen2').style.cursor = 'pointer';
+document.getElementById('gen3').style.cursor = 'pointer';
+
+document.getElementById('gen1').addEventListener('click', () => {
+  state.gen1.cb52A = !state.gen1.cb52A;
+  state.gen1.active = state.gen1.cb52A;
+  updateDisplay();
+});
+
+document.getElementById('gen2').addEventListener('click', () => {
+  state.gen2.cb52A = !state.gen2.cb52A;
+  state.gen2.active = state.gen2.cb52A;
+  updateDisplay();
+});
+
+document.getElementById('gen3').addEventListener('click', () => {
+  state.gen3.cb52A = !state.gen3.cb52A;
+  state.gen3.active = state.gen3.cb52A;
+  updateDisplay();
+});
+
+// Random breaker events (occasionally toggle gen 3)
+setInterval(() => {
+  if (Math.random() < 0.05) { // 5% chance every 5 seconds
+    state.gen3.cb52A = !state.gen3.cb52A;
+    state.gen3.active = state.gen3.cb52A;
+  }
+}, 5000);
+
+// Start simulation
+setInterval(simulate, 1000);
+updateDisplay();
+</script>
+
+</body>
+</html>

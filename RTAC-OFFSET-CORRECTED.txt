@@ -1,0 +1,148 @@
+═══════════════════════════════════════════════════════════════════════════════
+  RTAC OFFSET - CONFIGURATION CORRECTED
+═══════════════════════════════════════════════════════════════════════════════
+
+CORRECTED: RTAC uses offset with SINGLE 16-bit registers (not 32-bit pairs)
+
+═══════════════════════════════════════════════════════════════════════════════
+  ACTUAL RTAC REGISTER LAYOUT
+═══════════════════════════════════════════════════════════════════════════════
+
+Modbus Display    Internal Address    RTAC Assignment    Data Type
+─────────────────────────────────────────────────────────────────────────────
+40001 (empty)  →  Register 0       →  NOT USED          (offset)
+40002 (2057)   →  Register 1       →  GenSet_1 ✓        uint16
+40003 (empty)  →  Register 2       →  GenSet_2          uint16
+40004 (empty)  →  Register 3       →  GenSet_3          uint16
+
+Key Points:
+• RTAC has a 1-register offset (starts at 40002, not 40001)
+• Each generator uses a SINGLE 16-bit register (not 32-bit pairs)
+• Values are stored directly (no MSR/LSR byte order issues)
+• Max value: 65535 (16-bit unsigned)
+
+═══════════════════════════════════════════════════════════════════════════════
+  CORRECTED CONFIGURATION
+═══════════════════════════════════════════════════════════════════════════════
+
+modbus.config.json NOW configured as:
+
+GEN1_KW:
+  address: 1        ← Register 1 (40002)
+  length: 1         ← Single 16-bit register
+  datatype: uint16  ← 16-bit unsigned (not uint32)
+  scale: 1          ← Direct value in kW
+
+GEN2_KW:
+  address: 2        ← Register 2 (40003)
+  length: 1         ← Single 16-bit register
+  datatype: uint16  ← 16-bit unsigned
+  scale: 1          ← Direct value in kW
+
+GEN3_KW:
+  address: 3        ← Register 3 (40004)
+  length: 1         ← Single 16-bit register
+  datatype: uint16  ← 16-bit unsigned
+  scale: 1          ← Direct value in kW
+
+═══════════════════════════════════════════════════════════════════════════════
+  WHAT CHANGED
+═══════════════════════════════════════════════════════════════════════════════
+
+BEFORE (Incorrect - assumed 32-bit pairs):
+  GEN1_KW: address 1, length 2, datatype uint32  ← Would read 2 registers
+  GEN2_KW: address 3, length 2, datatype uint32  ← Would skip register 2
+  GEN3_KW: address 5, length 2, datatype uint32  ← Would skip register 4
+
+AFTER (Correct - single 16-bit values):
+  GEN1_KW: address 1, length 1, datatype uint16  ← Reads register 1 only ✓
+  GEN2_KW: address 2, length 1, datatype uint16  ← Reads register 2 only ✓
+  GEN3_KW: address 3, length 1, datatype uint16  ← Reads register 3 only ✓
+
+═══════════════════════════════════════════════════════════════════════════════
+  VERIFICATION SCRIPT UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+verify-connection.js now:
+• Reads registers 1-3 (not 1-4)
+• Treats each as a single 16-bit value
+• Displays: "Register 1 (40002) GenSet_1: 2057 kW"
+
+Expected output:
+  ✅ Holding registers read successful!
+     Raw values: [2057, 0, 0]
+  
+     Generator Power Values (16-bit):
+     Register 1 (40002) GenSet_1: 2057 kW  ✓
+     Register 2 (40003) GenSet_2: 0 kW
+     Register 3 (40004) GenSet_3: 0 kW
+
+═══════════════════════════════════════════════════════════════════════════════
+  COMPLETE REGISTER MAP
+═══════════════════════════════════════════════════════════════════════════════
+
+COILS (Circuit Breakers):
+  Address 0 → Gen_1_52A (Coil 00001)
+  Address 1 → Gen_2_52A (Coil 00002)
+  Address 2 → Gen_3_52A (Coil 00003)
+
+HOLDING REGISTERS (Generator Power):
+  Address 0 → NOT USED (RTAC offset)
+  Address 1 → GenSet_1 kW (40002) ← 16-bit value
+  Address 2 → GenSet_2 kW (40003) ← 16-bit value
+  Address 3 → GenSet_3 kW (40004) ← 16-bit value
+
+═══════════════════════════════════════════════════════════════════════════════
+  WHY THE OFFSET EXISTS
+═══════════════════════════════════════════════════════════════════════════════
+
+Common reasons for RTAC offset:
+1. RTAC configuration reserves register 0 for system use
+2. User-friendly addressing (starts at 1 instead of 0)
+3. Compatibility with legacy systems
+4. Prevents accidental writes to register 0
+
+This is a normal RTAC configuration pattern.
+
+═══════════════════════════════════════════════════════════════════════════════
+  FILES UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ modbus.config.json          - Changed to uint16, addresses 1,2,3
+✓ verify-connection.js        - Reads 3 registers as 16-bit values
+✓ RTAC-OFFSET-CORRECTED.txt   - This explanation file
+
+═══════════════════════════════════════════════════════════════════════════════
+  TESTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Run verification:
+  npm run verify
+
+Expected result:
+  ✅ Register 1 (40002) GenSet_1: 2057 kW  ← Matches your PLC value!
+
+Then start the server:
+  npm start
+
+Open HMI:
+  http://localhost:4000/test.html
+
+You should see:
+  GEN-1: 2057 kW
+  52A: OPEN/CLOSED (depending on coil 0 value)
+
+═══════════════════════════════════════════════════════════════════════════════
+  SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Identified RTAC offset (starts at register 1, not 0)
+✅ Corrected data type (uint16, not uint32)
+✅ Fixed register addressing (consecutive 1,2,3 not pairs)
+✅ Updated verification script to match
+✅ Configuration now matches actual RTAC layout
+
+Ready to test! Run: npm run verify
+
+═══════════════════════════════════════════════════════════════════════════════
+

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Load Bank Control – HMI (No Trend)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg:#d3d3d3; --panel:#171a21; --ink:#e8ecf1; --muted:#96a0b5;
+    --ok:#1db954; --warn:#ffb020; --bad:#ff4d4f; --accent:#4ea1ff;
+    --card:#1b1f27; --chip:#232836; --chip2:#0e223a;
+    --br:16px; --pad:14px;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  html,body{height:100%;background:var(--bg);color:#2d3748;margin:0}
+  b{color:#1a202c}
+  .wrap{padding:18px;max-width:1600px;margin:0 auto}
+  .row{display:grid;grid-gap:14px}
+  .r4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .r3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{background:#ffffff;border-radius:var(--br);padding:var(--pad);box-shadow:0 2px 4px rgba(0,0,0,0.1);border:1px solid #e2e8f0}
+  .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .pill{display:inline-flex;gap:6px;align-items:center;background:#e2e8f0;border-radius:999px;padding:6px 10px;font-size:12px;color:#1a202c;font-weight:600;border:1px solid #cbd5e0}
+  .badge{border:2px solid #cbd5e0;border-radius:999px;padding:3px 8px;font-size:11px;color:#2d3748;background:#f7fafc;font-weight:600}
+  .badge.ok{border-color:#22c55e;color:#15803d;background:#dcfce7;font-weight:700}
+  .badge.bad{border-color:#ef4444;color:#b91c1c;background:#fee2e2;font-weight:700}
+  .badge.warn{border-color:#f59e0b;color:#b45309;background:#fef3c7;font-weight:700}
+  .title{font-size:14px;color:#4a5568;margin-bottom:8px;font-weight:600}
+  .big{font-size:32px;font-weight:700;letter-spacing:0.2px;color:#1a202c}
+  .sub{font-size:12px;color:#4a5568}
+  .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .k{display:grid;gap:4px}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .ctrl{display:grid;gap:6px}
+  input[type=number]{background:#ffffff;border:2px solid #4a5568;border-radius:10px;color:#1a202c;
+    padding:8px 10px;font-size:14px;outline:none;font-weight:500}
+  input[disabled]{opacity:.6}
+  .btn{cursor:pointer;border:2px solid #4a5568;background:#3182ce;color:#ffffff;
+    padding:8px 12px;border-radius:10px;font-size:14px;font-weight:600}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.secondary{background:#718096;border-color:#4a5568;color:#ffffff}
+  .btn.danger{background:#dc2626;border-color:#991b1b;color:#ffffff}
+  .btn.block{width:100%}
+  .row-perm{display:grid;grid-template-columns:repeat(1,1fr);gap:6px;font-size:13px;color:#2d3748}
+  .ok{color:#15803d;font-weight:700} .bad{color:#b91c1c;font-weight:700}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .tile{background:#ffffff;border:2px solid #cbd5e0;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+  .kv .big{line-height:1}
+  small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;color:#4a5568;font-weight:500}
+  .right{display:flex;gap:18px;align-items:center}
+  .caps{font-variant:all-small-caps;letter-spacing:.8px;color:#4a5568;font-weight:600}
+  .help{color:#4a5568;font-size:12px}
+  @media (max-width:1200px){.r4{grid-template-columns:repeat(2,1fr)} .r3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+
+  <!-- HEADER -->
+  <div class="hdr card">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div id="mode-pill" class="pill">
+        <b id="mode-label">TEST</b>
+        <span id="burnin-pill" class="badge" style="display:none">BURN-IN <span id="burnin-eta">30</span>s</span>
+      </div>
+      <button id="btn-toggle-mode" class="btn" style="font-size:12px;padding:6px 12px">
+        <span id="mode-toggle-label">Switch to Live</span>
+      </button>
+      <span class="caps">Status:</span>
+      <span id="status-badge" class="badge ok">OK</span>
+    </div>
+    <div class="right">
+      <span class="sub">Mode: <b id="conn-mode">SIMULATION</b></span>
+      <span class="sub">Comms: <b id="comms">Modbus OK</b></span>
+      <span class="sub">Last Write: <b id="lastwrite">—</b></span>
+    </div>
+  </div>
+
+  <!-- TOP ROW: 3 GEN TILES + PERMISSIVES -->
+  <div class="row r4">
+    <div class="card">
+      <div class="title">GEN-1</div>
+      <div class="kv">
+        <div class="k">
+          <div id="g1kw" class="big">0 kW</div>
+          <div class="sub">52A: <b id="g1cb">OPEN</b></div>
+        </div>
+        <div class="tile">
+          <div class="sub">HighLimit Util.</div>
+          <div id="g1pct" class="big">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title">GEN-2</div>
+      <div class="kv">
+        <div class="k">
+          <div id="g2kw" class="big">0 kW</div>
+          <div class="sub">52A: <b id="g2cb">OPEN</b></div>
+        </div>
+        <div class="tile">
+          <div class="sub">HighLimit Util.</div>
+          <div id="g2pct" class="big">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title">GEN-3</div>
+      <div class="kv">
+        <div class="k">
+          <div id="g3kw" class="big">0 kW</div>
+          <div class="sub">52A: <b id="g3cb">OPEN</b></div>
+        </div>
+        <div class="tile">
+          <div class="sub">HighLimit Util.</div>
+          <div id="g3pct" class="big">0%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title">Permissives</div>
+      <div class="row-perm">
+        <div>Gens Online: <b id="gensOnline">0</b> <span id="p_gens" class="ok">✓</span></div>
+        <div>Gateway Healthy: <span id="p_comms" class="ok">✓</span></div>
+        <div style="opacity:0.3">Burn-in Complete: <span id="p_burn" class="bad">✕</span> (disabled)</div>
+        <div>Alarms: <span id="p_alarms" class="ok">✓</span></div>
+        <div style="opacity:0.3">Available ≥ SP: <span id="p_avail" class="ok">✓</span> (disabled)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MID ROW: TARGET LOAD (PROMINENT) -->
+  <div class="row r3" style="margin-top:14px">
+    <div class="card" style="grid-column:span 2;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#ffffff;border:3px solid #5568d3">
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎯 Target Gen kW - PRIMARY CONTROL</div>
+      <div class="controls">
+        <div class="ctrl">
+          <label class="sub" style="color:#e0e7ff">Current Target (Read from PLC)</label>
+          <input id="in_target_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
+        </div>
+        <div class="ctrl">
+          <label class="sub" style="color:#e0e7ff">New Target (Write to PLC)</label>
+          <input id="in_target_write" type="number" step="10" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #4c51bf" value="0" />
+        </div>
+      </div>
+      <button id="btn_write_target" class="btn block" style="margin-top:12px;background:#10b981;border-color:#059669;font-size:16px;font-weight:700;padding:12px">
+        ✓ Write Target Gen kW
+      </button>
+      <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
+        <div class="sub" style="color:#e0e7ff">Last Write: <b id="cfg_lastwrite" style="color:#ffffff">—</b></div>
+        <div class="sub" style="color:#e0e7ff">Status: <b id="cfg_status" style="color:#ffffff">Ready</b></div>
+      </div>
+    </div>
+
+    <!-- LOAD BANK PANEL (DISABLED) -->
+    <div class="card" style="opacity:0.3;pointer-events:none">
+      <div class="title">Load Bank (DISABLED - Testing Only)</div>
+      <div class="kv">
+        <div class="k">
+          <div id="lb_meas" class="big">0 kW</div>
+          <div class="sub">Measured</div>
+        </div>
+        <div class="k">
+          <div id="lb_appl" class="big">0 kW</div>
+          <div class="sub">Applied</div>
+        </div>
+        <div class="k">
+          <div id="lb_avail" class="big">0 kW</div>
+          <div class="sub">Available</div>
+        </div>
+        <div class="k">
+          <div id="lb_sp" class="big">0 kW</div>
+          <div class="sub">Setpoint</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ROW: LOAD BANK CAP + HIGH LIMIT -->
+  <div class="row r3" style="margin-top:14px">
+    <div class="card">
+      <div class="title">Load Bank Capacity</div>
+      <div class="controls">
+        <div class="ctrl">
+          <label class="sub">Current Value (Read)</label>
+          <input id="in_lbcap_read" type="number" readonly style="background:#f0f0f0" value="0" />
+        </div>
+        <div class="ctrl">
+          <label class="sub">New Value (Write)</label>
+          <input id="in_lbcap_write" type="number" step="10" min="0" max="5000" value="0" />
+        </div>
+      </div>
+      <button id="btn_write_lbcap" class="btn block" style="margin-top:10px">Write LB Cap</button>
+    </div>
+
+    <div class="card">
+      <div class="title">Gen High Limit</div>
+      <div class="controls">
+        <div class="ctrl">
+          <label class="sub">Current Limit (Read)</label>
+          <input id="in_highlim_read" type="number" readonly style="background:#f0f0f0" value="0" />
+        </div>
+        <div class="ctrl">
+          <label class="sub">New Limit (Write)</label>
+          <input id="in_highlim_write" type="number" step="10" min="0" max="5000" value="0" />
+        </div>
+      </div>
+      <button id="btn_write_highlim" class="btn block" style="margin-top:10px">Write High Limit</button>
+    </div>
+
+    <div class="card" style="background:#f8fafc;border:2px dashed #cbd5e0">
+      <div class="title" style="color:#64748b">Control Status</div>
+      <div style="padding:12px;display:grid;gap:8px">
+        <div class="tile">
+          <div class="sub">Last Write</div>
+          <div style="font-weight:600;color:#1a202c"><span id="cfg_lastwrite2">—</span></div>
+        </div>
+        <div class="tile">
+          <div class="sub">Write Status</div>
+          <div style="font-weight:600;color:#1a202c"><span id="cfg_status2">Ready</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ========================== QUICKHMI BINDING HOOKS ========================== */
+/* Replace readTag/writeTag with QuickHMI API or Script Assignments. */
+const API_BASE = (typeof window !== "undefined" && window.HMI_MODBUS_API !== undefined)
+  ? window.HMI_MODBUS_API
+  : "http://localhost:4000";
+const STATE_POLL_MS = Number((typeof window !== "undefined" && window.HMI_STATE_POLL_MS) || 1000);
+
+// Toggle between simulation and live mode
+let isLiveMode = false;
+let BACKEND_ENABLED = false;
+
+async function readTag(tagName) {
+  if (!BACKEND_ENABLED) return undefined;
+  const res = await fetch(`${API_BASE}/api/tags/${encodeURIComponent(tagName)}`);
+  if (!res.ok) throw new Error(`readTag ${tagName} failed (${res.status})`);
+  const payload = await res.json();
+  return payload.value;
+}
+
+async function writeTag(tagName, value, meta = {}) {
+  if (!BACKEND_ENABLED) {
+    console.warn("writeTag suppressed (no backend)", tagName, value);
+    return { offline: true };
+  }
+  const res = await fetch(`${API_BASE}/api/write`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tag: tagName, value, meta })
+  });
+  if (!res.ok) {
+    let message = `writeTag ${tagName} failed (${res.status})`;
+    try {
+      const err = await res.json();
+      if (err?.error) message = err.error;
+    } catch (_) {}
+    throw new Error(message);
+  }
+  return res.json();
+}
+
+async function sendCommand(command, payload = {}) {
+  if (!BACKEND_ENABLED) {
+    console.warn("command suppressed (no backend)", command, payload);
+    return { offline: true };
+  }
+  const res = await fetch(`${API_BASE}/api/command`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ command, payload })
+  });
+  if (!res.ok) {
+    let message = `command ${command} failed (${res.status})`;
+    try {
+      const err = await res.json();
+      if (err?.error) message = err.error;
+    } catch (_) {}
+    throw new Error(message);
+  }
+  return res.json();
+}
+
+/* =============================== STATE MODEL =============================== */
+const s = {
+  mode: "AUTO",         // AUTO | MANUAL | TEST
+  commsOK: true,
+  burnIn_s: 30, burnET: 0, burnActive: true,
+  alarms: [],
+
+  cfg: {
+    targetPerGenKW: 2050,
+    maxLB_kW: 2000,
+    step_kW: 50,
+    devCap_scaled: 10000,  // scaled watts
+    genHighLimit_kW: 2150,
+    ramp_kW_per_min: 600,
+    minHWStep_kW: 50,      // from gateway
+    targetGenKW_read: 0,   // from holding register 40001 (read)
+    loadBankCap_read: 0,   // from holding register 40003 (read)
+    genHighLimit_read: 0,  // from holding register 40005 (read)
+  },
+
+  gen: { g1_kW: 2015, g2_kW: 2080, g3_kW: 0, g1_52A: true, g2_52A: true, g3_52A: false },
+  lb:  { measured_kW: 1850, applied_kW: 1800, available_kW: 2400, setpoint_kW: 1900 },
+
+  wr: { busy:false, ok:false, err:null, last:null }
+};
+
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const roundTo=(v,step)=>Math.round(v/step)*step;
+const ts=()=>new Date().toISOString().replace("T"," ").slice(0,19)+"Z";
+
+/* ============================== UI BINDINGS ============================== */
+const $ = (id)=>document.getElementById(id);
+
+function paint() {
+  // TESTING MODE: Only update elements that exist
+  // header
+  const modeLabel = $("mode-label");
+  if (modeLabel) modeLabel.textContent = s.mode;
+  
+  const statusBadge = $("status-badge");
+  if (statusBadge) {
+    statusBadge.className = "badge " + (s.commsOK && s.alarms.length===0 ? "ok" : (s.commsOK ? "warn" : "bad"));
+    statusBadge.textContent = s.commsOK ? (s.alarms.length? "ALARM":"OK") : "COMMS FAULT";
+  }
+  
+  const comms = $("comms");
+  if (comms) comms.textContent = s.commsOK ? "Modbus OK" : "FAULT";
+  
+  const lastwrite = $("lastwrite");
+  if (lastwrite) lastwrite.textContent = s.wr.last ?? "—";
+
+  // gens - ACTIVE
+  const lim = s.cfg.genHighLimit_kW || 2150;
+  [["g1",s.gen.g1_kW,s.gen.g1_52A],["g2",s.gen.g2_kW,s.gen.g2_52A],["g3",s.gen.g3_kW,s.gen.g3_52A]].forEach(([id,kw,cb])=>{
+    const kwEl = $(id+"kw");
+    const cbEl = $(id+"cb");
+    const pctEl = $(id+"pct");
+    if (kwEl) kwEl.textContent = kw+" kW";
+    if (cbEl) cbEl.textContent = cb?"CLOSED":"OPEN";
+    if (pctEl) pctEl.textContent = Math.round(100*kw/lim)+"%";
+  });
+
+  // permissives - ACTIVE
+  const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
+  const gensOnlineEl = $("gensOnline");
+  if (gensOnlineEl) gensOnlineEl.textContent = gensOnline;
+  
+  const pGens = $("p_gens");
+  if (pGens) pGens.className = gensOnline>0 ? "ok" : "bad";
+  
+  const pComms = $("p_comms");
+  if (pComms) pComms.className = s.commsOK ? "ok" : "bad";
+  
+  const pAlarms = $("p_alarms");
+  if (pAlarms) pAlarms.className = s.alarms.length ? "bad":"ok";
+
+  // CONFIG INPUTS - ACTIVE (Read values from holding registers)
+  const targetReadEl = $("in_target_read");
+  if (targetReadEl) targetReadEl.value = s.cfg.targetGenKW_read || 0;
+  
+  const lbcapReadEl = $("in_lbcap_read");
+  if (lbcapReadEl) lbcapReadEl.value = s.cfg.loadBankCap_read || 0;
+  
+  const highlimReadEl = $("in_highlim_read");
+  if (highlimReadEl) highlimReadEl.value = s.cfg.genHighLimit_read || 0;
+}
+paint();
+
+function pushAlarm(message) {
+  if (!message) return;
+  if (!Array.isArray(s.alarms)) s.alarms = [];
+  if (!s.alarms.includes(message)) s.alarms.push(message);
+}
+
+function mergeState(from, target = s) {
+  Object.keys(from || {}).forEach((key) => {
+    const next = from[key];
+    if (next && typeof next === "object" && !Array.isArray(next)) {
+      if (!target[key] || typeof target[key] !== "object") target[key] = {};
+      mergeState(next, target[key]);
+    } else {
+      target[key] = next;
+    }
+  });
+}
+
+let pollTimer = null;
+let pollInFlight = false;
+let simTimer = null;
+
+async function fetchStateOnce() {
+  if (!BACKEND_ENABLED || pollInFlight) return;
+  pollInFlight = true;
+  try {
+    // Read genset kW values from Input Registers (30001, 30003, 30005)
+    const [g1kW, g2kW, g3kW] = await Promise.all([
+      readTag("HMI_Modbus_Server_Tags_Kw_GenSet_1"),
+      readTag("HMI_Modbus_Server_Tags_Kw_GenSet_2"),
+      readTag("HMI_Modbus_Server_Tags_Kw_GenSet_3")
+    ]);
+    
+    // Update genset kW from Input Registers
+    if (g1kW !== undefined) s.gen.g1_kW = g1kW;
+    if (g2kW !== undefined) s.gen.g2_kW = g2kW;
+    if (g3kW !== undefined) s.gen.g3_kW = g3kW;
+    
+    // Fetch rest of state from general endpoint
+    const res = await fetch(`${API_BASE}/api/state`);
+    if (!res.ok) throw new Error(`state poll failed (${res.status})`);
+    const payload = await res.json();
+    const remote = payload.state ?? payload;
+    
+    // Preserve Input Register values and merge rest of state
+    const genKW = { g1_kW: s.gen.g1_kW, g2_kW: s.gen.g2_kW, g3_kW: s.gen.g3_kW };
+    mergeState(remote);
+    s.gen.g1_kW = genKW.g1_kW;
+    s.gen.g2_kW = genKW.g2_kW;
+    s.gen.g3_kW = genKW.g3_kW;
+    
+    if (payload.meta?.lastWrite) s.wr.last = payload.meta.lastWrite;
+    s.commsOK = true;
+  } catch (err) {
+    console.error(err);
+    s.commsOK = false;
+    pushAlarm(`State poll failed: ${err.message}`);
+  } finally {
+    paint();
+    pollInFlight = false;
+  }
+}
+
+function startBackendSync() {
+  if (pollTimer) clearInterval(pollTimer);
+  fetchStateOnce();
+  pollTimer = setInterval(fetchStateOnce, STATE_POLL_MS);
+}
+
+function stopBackendSync() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
+/* ============================== INTERACTION ============================== */
+// CONFIG WRITE HANDLERS - ACTIVE
+async function writeConfigValue(tagName, inputId, statusId) {
+  const inputEl = $(inputId);
+  const statusEl = $(statusId || "cfg_status");
+  const statusEl2 = $("cfg_status2");
+  const lastWriteEl = $("cfg_lastwrite");
+  const lastWriteEl2 = $("cfg_lastwrite2");
+  
+  if (!inputEl) return;
+  
+  const value = parseInt(inputEl.value);
+  if (isNaN(value) || value < 0) {
+    if (statusEl) statusEl.textContent = "Invalid value";
+    if (statusEl2) statusEl2.textContent = "Invalid value";
+    return;
+  }
+  
+  if (statusEl) statusEl.textContent = "Writing...";
+  if (statusEl2) statusEl2.textContent = "Writing...";
+  
+  try {
+    await writeTag(tagName, value);
+    const timestamp = ts();
+    if (statusEl) statusEl.textContent = "Write OK ✓";
+    if (statusEl2) statusEl2.textContent = "Write OK ✓";
+    if (lastWriteEl) lastWriteEl.textContent = timestamp;
+    if (lastWriteEl2) lastWriteEl2.textContent = timestamp;
+    setTimeout(() => { 
+      if (statusEl) statusEl.textContent = "Ready"; 
+      if (statusEl2) statusEl2.textContent = "Ready";
+    }, 2000);
+  } catch (err) {
+    console.error(err);
+    if (statusEl) statusEl.textContent = "Write Failed: " + err.message;
+    if (statusEl2) statusEl2.textContent = "Write Failed";
+    pushAlarm(`Config write failed: ${err.message}`);
+  }
+}
+
+const btnWriteTarget = $("btn_write_target");
+if (btnWriteTarget) {
+  btnWriteTarget.onclick = () => writeConfigValue("HMI_Modbus_Server_Tags_Target_kW_Input", "in_target_write");
+}
+
+const btnWriteLBCap = $("btn_write_lbcap");
+if (btnWriteLBCap) {
+  btnWriteLBCap.onclick = () => writeConfigValue("HMI_Modbus_Server_Tags_Load_Bank_Cap_Input", "in_lbcap_write");
+}
+
+const btnWriteHighLim = $("btn_write_highlim");
+if (btnWriteHighLim) {
+  btnWriteHighLim.onclick = () => writeConfigValue("HMI_Modbus_Server_Tags_KW_High_Limit_Input", "in_highlim_write");
+}
+
+/* ============================ SIMPLE SIMULATION ============================ */
+/* Remove this block when bound to real tags. It drives values for demo. */
+function startDemoSimulation(){
+  if (simTimer) clearInterval(simTimer);
+  simTimer = setInterval(()=>{
+    // burn-in
+    if (s.burnActive){ s.burnET++; if (s.burnET>=s.burnIn_s){ s.burnActive=false; } }
+
+    // plant: measured follows setpoint with noise
+    const err = s.lb.setpoint_kW - s.lb.measured_kW;
+    const dv  = clamp(err*0.25, -120, 120);
+    s.lb.measured_kW = Math.round(clamp(s.lb.measured_kW + dv + (Math.random()-0.5)*10, 0, 5000));
+    s.lb.applied_kW  = Math.round(clamp(s.lb.measured_kW - (Math.random()-0.5)*10, 0, 5000));
+    s.lb.available_kW = Math.round(2400 + Math.sin(Date.now()/15000)*200);
+
+    // gens
+    const tgt=s.cfg.targetPerGenKW, jitter=()=>Math.round((Math.random()-0.5)*40);
+    if (s.gen.g1_52A) s.gen.g1_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
+    if (s.gen.g2_52A) s.gen.g2_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
+    if (s.gen.g3_52A) s.gen.g3_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
+
+    // simple AUTO setpoint adjuster (mirrors PLC logic shape)
+    if (s.mode==="AUTO" && !s.burnActive && s.commsOK && !s.wr.busy){
+      const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
+      const avg = gensOnline? Math.round((s.gen.g1_kW+s.gen.g2_kW+s.gen.g3_kW)/gensOnline):0;
+      const high = Math.max(s.gen.g1_kW,s.gen.g2_kW,s.gen.g3_kW);
+      const genDiff = s.cfg.targetPerGenKW - avg;
+      const step = roundTo(s.cfg.step_kW, s.cfg.minHWStep_kW);
+      let next = s.lb.setpoint_kW;
+      const capOK = s.lb.setpoint_kW*100 <= s.lb.measured_kW*100 + s.cfg.devCap_scaled;
+
+      if (capOK){
+        if (high >= s.cfg.genHighLimit_kW && next >= 2*step) next -= 2*step;
+        else if (genDiff <= -step && next >= step) next -= step;
+        else if (genDiff > step && high <= s.cfg.genHighLimit_kW && next <= s.cfg.maxLB_kW - step) next += step;
+        else if (s.lb.setpoint_kW*100 > s.lb.measured_kW*100 + s.cfg.devCap_scaled) next -= 2*step;
+      } else if (s.lb.setpoint_kW*100 >= s.lb.measured_kW*100 + s.cfg.devCap_scaled + 10000) {
+        next -= 2*step;
+      }
+      next = clamp(roundTo(next, s.cfg.minHWStep_kW), 0, Math.min(s.cfg.maxLB_kW, s.lb.available_kW));
+      if (next !== s.lb.setpoint_kW){
+        s.lb.setpoint_kW = next;
+        s.wr = {busy:false, ok:true, err:null, last:ts()};
+      }
+    }
+
+    paint();
+  }, 1000);
+}
+
+function stopDemoSimulation(){
+  if (simTimer) {
+    clearInterval(simTimer);
+    simTimer = null;
+  }
+}
+
+/* ============================ MODE TOGGLE ============================ */
+function updateModeUI() {
+  const connModeEl = $("conn-mode");
+  const modeToggleLabelEl = $("mode-toggle-label");
+  
+  if (connModeEl) {
+    connModeEl.textContent = isLiveMode ? "LIVE (Modbus TCP)" : "SIMULATION";
+  }
+  if (modeToggleLabelEl) {
+    modeToggleLabelEl.textContent = isLiveMode ? "Switch to Simulation" : "Switch to Live";
+  }
+}
+
+function toggleMode() {
+  isLiveMode = !isLiveMode;
+  BACKEND_ENABLED = isLiveMode;
+  
+  // Stop current mode
+  stopBackendSync();
+  stopDemoSimulation();
+  
+  // Clear any alarms from previous mode
+  s.alarms = [];
+  
+  // Start new mode
+  if (isLiveMode) {
+    console.log("Switching to LIVE mode (Modbus TCP)");
+    startBackendSync();
+  } else {
+    console.log("Switching to SIMULATION mode");
+    s.commsOK = true; // Reset comms status for simulation
+    startDemoSimulation();
+  }
+  
+  updateModeUI();
+  paint();
+}
+
+// Button handler
+const btnToggleMode = $("btn-toggle-mode");
+if (btnToggleMode) {
+  btnToggleMode.onclick = toggleMode;
+}
+
+/* ============================ INITIALIZATION ============================ */
+updateModeUI();
+if (isLiveMode) {
+  startBackendSync();
+} else {
+  startDemoSimulation();
+}
+
+</script>
+</body>
+</html>

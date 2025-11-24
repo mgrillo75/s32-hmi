@@ -1,0 +1,149 @@
+═══════════════════════════════════════════════════════════════════════════════
+  MODBUS TCP MASTER - VERIFICATION SCRIPT UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+UPDATED: verify-connection.js now tests the actual register map
+
+═══════════════════════════════════════════════════════════════════════════════
+  WHAT THE VERIFICATION SCRIPT TESTS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. COILS (Circuit Breaker Status)
+   ─────────────────────────────────
+   Reads: Coils 0, 1, 2
+   Tests: Gen_1_52A, Gen_2_52A, Gen_3_52A
+   
+   Output shows:
+   • Raw boolean values [true/false, true/false, true/false]
+   • Decoded status: "CLOSED ✓" or "OPEN ✗" for each breaker
+
+2. HOLDING REGISTERS (Generator Power)
+   ──────────────────────────────────────
+   Reads: Holding registers 0-3 (first 4 registers)
+   Tests: GenSet_1 (0-1), GenSet_2 (2-3)
+   
+   Output shows:
+   • Raw 16-bit register values
+   • Decoded 32-bit unsigned values (MSR byte order)
+   • Hex representation
+   • Possible scaled values (if > 1000, shows ÷100 for kW)
+
+═══════════════════════════════════════════════════════════════════════════════
+  CORRECTED REGISTER MAP
+═══════════════════════════════════════════════════════════════════════════════
+
+COILS (0-2):
+  Address 0 → Gen_1_52A (Generator 1 Circuit Breaker)
+  Address 1 → Gen_2_52A (Generator 2 Circuit Breaker)
+  Address 2 → Gen_3_52A (Generator 3 Circuit Breaker)
+
+HOLDING REGISTERS (0-5):
+  Address 0-1 → Modbus_Server_Kw_GenSet_1 (Generator 1 Power)
+  Address 2-3 → Modbus_Server_Kw_GenSet_2 (Generator 2 Power)
+  Address 4-5 → Modbus_Server_Kw_GenSet_3 (Generator 3 Power)
+
+NOTE: Register pairs are NON-OVERLAPPING (0-1, 2-3, 4-5)
+      Previously they were incorrectly set as overlapping (0-1, 1-2, 2-3)
+
+═══════════════════════════════════════════════════════════════════════════════
+  FILES UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ verify-connection.js           - Now tests coils 0-2 and holding 0-3
+✓ Modbus_Server_Registers_HMI.xml - Fixed register addresses (0-1, 2-3, 4-5)
+✓ modbus.config.json             - Updated to match XML (addresses 0, 2, 4)
+✓ REGISTER-MAP-SUMMARY.txt       - Updated documentation
+✓ TEST-RESULTS.txt               - This file
+
+═══════════════════════════════════════════════════════════════════════════════
+  HOW TO RUN THE VERIFICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Ensure your Modbus slave device is running and accessible
+   (IP: 127.0.0.1, Port: 35002 as configured)
+
+2. Run the verification script:
+   npm run verify
+
+3. Expected output:
+   ╔════════════════════════════════════════════════════════════╗
+   ║        Modbus TCP Connection Verification                 ║
+   ╚════════════════════════════════════════════════════════════╝
+   
+   Target Device: 127.0.0.1:35002
+   Unit ID: 1
+   Timeout: 2000ms
+   
+   ✅ TCP connection established!
+   
+   ═══════════════════════════════════════════════════════════
+   Testing COILS (Circuit Breaker Status)
+   ═══════════════════════════════════════════════════════════
+   ⏳ Reading coils 0-2 (Gen_1_52A, Gen_2_52A, Gen_3_52A)...
+   ✅ Coils read successful!
+      Raw values: [false, false, false]
+   
+      Coil 0 (Gen_1_52A): OPEN ✗
+      Coil 1 (Gen_2_52A): OPEN ✗
+      Coil 2 (Gen_3_52A): OPEN ✗
+   
+   ═══════════════════════════════════════════════════════════
+   Testing HOLDING REGISTERS (Generator Power)
+   ═══════════════════════════════════════════════════════════
+   ⏳ Reading holding registers 0-3 (GenSet_1, GenSet_2 data)...
+   ✅ Holding registers read successful!
+      Raw values: [0, 0, 0, 0]
+   
+      Decoded values (32-bit unsigned MSR):
+      Register 0-1 (GenSet_1): 0 (0x00000000)
+      Register 2-3 (GenSet_2): 0 (0x00000000)
+   
+   ╔════════════════════════════════════════════════════════════╗
+   ║  ✅ CONNECTION VERIFIED - Ready to start server!          ║
+   ╚════════════════════════════════════════════════════════════╝
+   
+   Register Map Tested:
+     • Coils 0-2: Circuit breaker status
+     • Holding 0-3: Generator power values
+   
+   Next steps:
+     1. Run 'npm start' to start the Modbus master server
+     2. Open http://localhost:4000/test.html in your browser
+     3. Monitor the HMI for live data from your device
+
+═══════════════════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+If coil read fails:
+  • Coils may not be configured on your device
+  • Check that coil addresses 0-2 exist
+  • Verify device supports function code 1 (Read Coils)
+
+If holding register read fails:
+  • Check that holding registers 0-3 exist on device
+  • Verify device supports function code 3 (Read Holding Registers)
+  • Ensure addresses match your device's register map
+
+If connection fails:
+  • Verify slaveHost and slavePort in modbus.config.json
+  • Check that device is powered on and accessible
+  • Test network connectivity: ping 127.0.0.1
+  • Verify unitId matches device configuration
+
+═══════════════════════════════════════════════════════════════════════════════
+  SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Verification script tests actual register layout
+✅ Tests 3 coils (circuit breakers)
+✅ Tests 4 holding registers (2 generator power values)
+✅ Displays decoded values in human-readable format
+✅ Shows breaker status as OPEN/CLOSED
+✅ Shows generator power as 32-bit values with optional scaling
+✅ All configuration files updated to match
+
+Ready to test! Run: npm run verify
+
+═══════════════════════════════════════════════════════════════════════════════
+

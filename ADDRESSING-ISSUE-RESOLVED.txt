@@ -1,0 +1,140 @@
+═══════════════════════════════════════════════════════════════════════════════
+  MODBUS ADDRESSING ISSUE - RESOLVED
+═══════════════════════════════════════════════════════════════════════════════
+
+ISSUE: GenSet_1 data appearing at 40002 instead of 40001
+
+═══════════════════════════════════════════════════════════════════════════════
+  ROOT CAUSE
+═══════════════════════════════════════════════════════════════════════════════
+
+Your PLC/RTAC code is using 1-BASED addressing when writing to Modbus registers:
+
+PLC Code (from screenshot):
+  Modbus_Server_Kw_GenSet_1.status.stVal := 2057  → Writes to register 1 (40002)
+  Modbus_Server_Kw_GenSet_2.status.stVal := 0     → Writes to register 3 (40004)
+  Modbus_Server_Kw_GenSet_3.status.stVal := 0     → Writes to register 5 (40006)
+
+ModScan Display:
+  40001: <00000>  ← Empty (register 0)
+  40002: <02041>  ← GenSet_1 value 2057 (register 1) ✓
+  40003: <00000>  ← Empty (register 2)
+  40004: <00000>  ← GenSet_2 value (register 3)
+
+═══════════════════════════════════════════════════════════════════════════════
+  MODBUS ADDRESSING EXPLAINED
+═══════════════════════════════════════════════════════════════════════════════
+
+Modbus Protocol Notation vs Internal Addressing:
+
+  Display Notation  | Internal Address | What It Means
+  ──────────────────|──────────────────|────────────────────────────
+  40001             | 0                | First holding register
+  40002             | 1                | Second holding register
+  40003             | 2                | Third holding register
+  40004             | 3                | Fourth holding register
+  40005             | 4                | Fifth holding register
+  40006             | 5                | Sixth holding register
+
+The "40001" notation is just for display - internally Modbus uses 0-based addressing.
+
+═══════════════════════════════════════════════════════════════════════════════
+  SOLUTION APPLIED
+═══════════════════════════════════════════════════════════════════════════════
+
+Updated modbus.config.json to match where PLC is ACTUALLY writing:
+
+BEFORE (Expected):
+  GEN1_KW: address 0 (40001-40002)  ← Would read empty registers
+  GEN2_KW: address 2 (40003-40004)  ← Would read empty registers
+  GEN3_KW: address 4 (40005-40006)  ← Would read empty registers
+
+AFTER (Actual):
+  GEN1_KW: address 1 (40002-40003)  ← Reads where PLC writes ✓
+  GEN2_KW: address 3 (40004-40005)  ← Reads where PLC writes ✓
+  GEN3_KW: address 5 (40006-40007)  ← Reads where PLC writes ✓
+
+═══════════════════════════════════════════════════════════════════════════════
+  ACTUAL REGISTER MAP (AS IMPLEMENTED)
+═══════════════════════════════════════════════════════════════════════════════
+
+COILS (0-based, starting at 0):
+  Address 0 → Gen_1_52A (Coil 00001)
+  Address 1 → Gen_2_52A (Coil 00002)
+  Address 2 → Gen_3_52A (Coil 00003)
+
+HOLDING REGISTERS (0-based, but PLC writes starting at 1):
+  Address 1-2 → GenSet_1 Power (40002-40003)  ← PLC writes here
+  Address 3-4 → GenSet_2 Power (40004-40005)  ← PLC writes here
+  Address 5-6 → GenSet_3 Power (40006-40007)  ← PLC writes here
+
+Note: Register 0 (40001) is NOT USED by the PLC
+
+═══════════════════════════════════════════════════════════════════════════════
+  WHY THIS HAPPENS
+═══════════════════════════════════════════════════════════════════════════════
+
+Common causes:
+1. PLC programming tool uses 1-based addressing (user-friendly)
+2. Modbus protocol uses 0-based addressing (technical)
+3. Configuration mismatch between PLC and HMI
+
+Your RTAC/PLC is configured to start at register 1 instead of register 0.
+This is not wrong - just different from the standard 0-based convention.
+
+═══════════════════════════════════════════════════════════════════════════════
+  FILES UPDATED
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ modbus.config.json      - Changed addresses from 0,2,4 to 1,3,5
+✓ verify-connection.js    - Now reads from registers 1-4 (not 0-3)
+✓ ADDRESSING-ISSUE-RESOLVED.txt - This explanation file
+
+═══════════════════════════════════════════════════════════════════════════════
+  TESTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Run the verification script:
+  npm run verify
+
+Expected output:
+  ✅ Holding registers read successful!
+     Raw values: [0, 2057, 0, 0]  ← Now reading from correct addresses
+  
+     Decoded values (32-bit unsigned MSR):
+     Register 1-2 (40002-40003) GenSet_1: 2057 ✓
+     Register 3-4 (40004-40005) GenSet_2: 0
+
+═══════════════════════════════════════════════════════════════════════════════
+  ALTERNATIVE SOLUTION (NOT IMPLEMENTED)
+═══════════════════════════════════════════════════════════════════════════════
+
+If you wanted to use standard 0-based addressing, you would need to change
+your PLC code to write starting at register 0:
+
+Change PLC code FROM:
+  Modbus_Server_Kw_GenSet_1 → Register 1
+  Modbus_Server_Kw_GenSet_2 → Register 3
+  Modbus_Server_Kw_GenSet_3 → Register 5
+
+Change PLC code TO:
+  Modbus_Server_Kw_GenSet_1 → Register 0
+  Modbus_Server_Kw_GenSet_2 → Register 2
+  Modbus_Server_Kw_GenSet_3 → Register 4
+
+But since the HMI is now configured to match your PLC, no PLC changes needed!
+
+═══════════════════════════════════════════════════════════════════════════════
+  SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ Issue identified: PLC uses 1-based addressing (starts at register 1)
+✅ HMI configuration updated to match PLC addressing
+✅ Verification script updated to test correct registers
+✅ System now reads from where PLC actually writes
+✅ No PLC code changes required
+
+Ready to test! Run: npm run verify
+
+═══════════════════════════════════════════════════════════════════════════════
+
