@@ -68,6 +68,8 @@
       <button id="btn-toggle-mode" class="btn" style="font-size:12px;padding:6px 12px">
         <span id="mode-toggle-label">Switch to Live</span>
       </button>
+      <span class="caps">Control:</span>
+      <span id="ctrl-mode-label" class="badge ok">AUTO</span>
       <span class="caps">Status:</span>
       <span id="status-badge" class="badge ok">OK</span>
     </div>
@@ -134,10 +136,33 @@
     </div>
   </div>
 
-  <!-- MID ROW: TARGET LOAD (PROMINENT) -->
+  <!-- MODE SELECTOR -->
   <div class="row r3" style="margin-top:14px">
+    <div class="card" style="background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);color:#ffffff;border:3px solid #e14eca">
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">⚙️ Control Mode Selector</div>
+      <div style="display:grid;gap:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button id="btn-mode-auto" class="btn" style="background:#10b981;border-color:#059669;font-size:14px;font-weight:700">
+            AUTO Mode
+          </button>
+          <button id="btn-mode-manual" class="btn secondary" style="font-size:14px;font-weight:700">
+            MANUAL Mode
+          </button>
+        </div>
+        <div style="padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
+          <div class="sub" style="color:#ffffff;font-size:11px">
+            <b>AUTO:</b> System automatically maintains generator target kW<br>
+            <b>MANUAL:</b> You directly control the load bank setpoint
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTO MODE PANEL -->
+  <div id="auto-mode-panel" class="row r3" style="margin-top:14px">
     <div class="card" style="grid-column:span 2;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#ffffff;border:3px solid #5568d3">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎯 Target Gen kW - PRIMARY CONTROL</div>
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎯 Target Gen kW - AUTO MODE CONTROL</div>
       <div class="controls">
         <div class="ctrl">
           <label class="sub" style="color:#e0e7ff">Current Target (Read from PLC)</label>
@@ -157,9 +182,9 @@
       </div>
     </div>
 
-    <!-- LOAD BANK PANEL (DISABLED) -->
-    <div class="card" style="opacity:0.3;pointer-events:none">
-      <div class="title">Load Bank (DISABLED - Testing Only)</div>
+    <!-- LOAD BANK PANEL -->
+    <div class="card">
+      <div class="title">Load Bank Status</div>
       <div class="kv">
         <div class="k">
           <div id="lb_meas" class="big">0 kW</div>
@@ -175,6 +200,53 @@
         </div>
         <div class="k">
           <div id="lb_sp" class="big">0 kW</div>
+          <div class="sub">Setpoint</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANUAL MODE PANEL -->
+  <div id="manual-mode-panel" class="row r3" style="margin-top:14px;display:none">
+    <div class="card" style="grid-column:span 2;background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);color:#ffffff;border:3px solid #e14eca">
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎛️ Manual Load Bank Control - DIRECT SETPOINT</div>
+      <div class="controls">
+        <div class="ctrl">
+          <label class="sub" style="color:#e0e7ff">Current Setpoint (Read from PLC)</label>
+          <input id="in_manual_sp_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
+        </div>
+        <div class="ctrl">
+          <label class="sub" style="color:#e0e7ff">New Setpoint (Write to PLC)</label>
+          <input id="in_manual_sp_write" type="number" step="50" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #c026d3" value="0" />
+        </div>
+      </div>
+      <button id="btn_write_manual_sp" class="btn block" style="margin-top:12px;background:#10b981;border-color:#059669;font-size:16px;font-weight:700;padding:12px">
+        ✓ Write Manual Setpoint
+      </button>
+      <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
+        <div class="sub" style="color:#ffffff"><b>⚠️ MANUAL MODE:</b> You are directly controlling the load bank.</div>
+        <div class="sub" style="color:#e0e7ff;font-size:11px">Valid range: 0 to <b id="manual_sp_max">2000</b> kW (based on available capacity)</div>
+      </div>
+    </div>
+
+    <!-- LOAD BANK PANEL (duplicate for manual mode) -->
+    <div class="card">
+      <div class="title">Load Bank Status</div>
+      <div class="kv">
+        <div class="k">
+          <div id="lb_meas2" class="big">0 kW</div>
+          <div class="sub">Measured</div>
+        </div>
+        <div class="k">
+          <div id="lb_appl2" class="big">0 kW</div>
+          <div class="sub">Applied</div>
+        </div>
+        <div class="k">
+          <div id="lb_avail2" class="big">0 kW</div>
+          <div class="sub">Available</div>
+        </div>
+        <div class="k">
+          <div id="lb_sp2" class="big">0 kW</div>
           <div class="sub">Setpoint</div>
         </div>
       </div>
@@ -252,8 +324,18 @@ async function readTag(tagName) {
 
 async function writeTag(tagName, value, meta = {}) {
   if (!BACKEND_ENABLED) {
-    console.warn("writeTag suppressed (no backend)", tagName, value);
-    return { offline: true };
+    console.warn("writeTag (simulation mode)", tagName, value);
+    
+    // Simulate writes in simulation mode
+    if (tagName === "HMI_Modbus_Server_Tags_Control_Mode_Input") {
+      s.controlMode = value ? true : false;
+      console.log(`Simulation: Control mode set to ${s.controlMode ? 'AUTO' : 'MANUAL'}`);
+    } else if (tagName === "HMI_Modbus_Server_Tags_Manual_Load_Bank_SP_Input") {
+      s.manualSetpoint_kW = clamp(value, 0, s.cfg.maxLB_kW);
+      console.log(`Simulation: Manual setpoint set to ${s.manualSetpoint_kW} kW`);
+    }
+    
+    return { offline: true, simulated: true };
   }
   const res = await fetch(`${API_BASE}/api/write`, {
     method: "POST",
@@ -299,6 +381,10 @@ const s = {
   burnIn_s: 30, burnET: 0, burnActive: true,
   alarms: [],
 
+  // AUTO/MANUAL control mode
+  controlMode: true,    // true = AUTO, false = MANUAL (from PLC register 12)
+  manualSetpoint_kW: 0, // Manual load bank setpoint (from PLC register 14)
+
   cfg: {
     targetPerGenKW: 2050,
     maxLB_kW: 2000,
@@ -330,6 +416,13 @@ function paint() {
   // header
   const modeLabel = $("mode-label");
   if (modeLabel) modeLabel.textContent = s.mode;
+  
+  // Control mode indicator
+  const ctrlModeLabel = $("ctrl-mode-label");
+  if (ctrlModeLabel) {
+    ctrlModeLabel.textContent = s.controlMode ? "AUTO" : "MANUAL";
+    ctrlModeLabel.className = "badge " + (s.controlMode ? "ok" : "warn");
+  }
   
   const statusBadge = $("status-badge");
   if (statusBadge) {
@@ -368,6 +461,16 @@ function paint() {
   const pAlarms = $("p_alarms");
   if (pAlarms) pAlarms.className = s.alarms.length ? "bad":"ok";
 
+  // Load bank status
+  const lbMeas = $("lb_meas");
+  const lbAppl = $("lb_appl");
+  const lbAvail = $("lb_avail");
+  const lbSp = $("lb_sp");
+  if (lbMeas) lbMeas.textContent = s.lb.measured_kW + " kW";
+  if (lbAppl) lbAppl.textContent = s.lb.applied_kW + " kW";
+  if (lbAvail) lbAvail.textContent = s.lb.available_kW + " kW";
+  if (lbSp) lbSp.textContent = s.lb.setpoint_kW + " kW";
+
   // CONFIG INPUTS - ACTIVE (Read values from holding registers)
   const targetReadEl = $("in_target_read");
   if (targetReadEl) targetReadEl.value = s.cfg.targetGenKW_read || 0;
@@ -377,6 +480,44 @@ function paint() {
   
   const highlimReadEl = $("in_highlim_read");
   if (highlimReadEl) highlimReadEl.value = s.cfg.genHighLimit_read || 0;
+
+  // AUTO/MANUAL mode display
+  const autoPanel = $("auto-mode-panel");
+  const manualPanel = $("manual-mode-panel");
+  
+  if (autoPanel) autoPanel.style.display = s.controlMode ? "block" : "none";
+  if (manualPanel) manualPanel.style.display = s.controlMode ? "none" : "block";
+  
+  // Manual setpoint display
+  const manualSpRead = $("in_manual_sp_read");
+  if (manualSpRead) manualSpRead.value = s.manualSetpoint_kW || 0;
+  
+  const manualSpMax = $("manual_sp_max");
+  if (manualSpMax) manualSpMax.textContent = s.cfg.maxLB_kW || 2000;
+
+  // Load bank (duplicate displays for manual mode)
+  const lb2Meas = $("lb_meas2");
+  const lb2Appl = $("lb_appl2");
+  const lb2Avail = $("lb_avail2");
+  const lb2Sp = $("lb_sp2");
+  if (lb2Meas) lb2Meas.textContent = s.lb.measured_kW + " kW";
+  if (lb2Appl) lb2Appl.textContent = s.lb.applied_kW + " kW";
+  if (lb2Avail) lb2Avail.textContent = s.lb.available_kW + " kW";
+  if (lb2Sp) lb2Sp.textContent = s.lb.setpoint_kW + " kW";
+
+  // Update mode button styling
+  const btnModeAuto = $("btn-mode-auto");
+  const btnModeManual = $("btn-mode-manual");
+  if (btnModeAuto) {
+    btnModeAuto.className = s.controlMode ? "btn" : "btn secondary";
+    btnModeAuto.style.background = s.controlMode ? "#10b981" : "#718096";
+    btnModeAuto.style.borderColor = s.controlMode ? "#059669" : "#4a5568";
+  }
+  if (btnModeManual) {
+    btnModeManual.className = s.controlMode ? "btn secondary" : "btn";
+    btnModeManual.style.background = s.controlMode ? "#718096" : "#dc2626";
+    btnModeManual.style.borderColor = s.controlMode ? "#4a5568" : "#991b1b";
+  }
 }
 paint();
 
@@ -407,16 +548,23 @@ async function fetchStateOnce() {
   pollInFlight = true;
   try {
     // Read genset kW values from Input Registers (30001, 30003, 30005)
-    const [g1kW, g2kW, g3kW] = await Promise.all([
+    // Read control mode and manual setpoint from Holding Registers
+    const [g1kW, g2kW, g3kW, controlMode, manualSP] = await Promise.all([
       readTag("HMI_Modbus_Server_Tags_Kw_GenSet_1"),
       readTag("HMI_Modbus_Server_Tags_Kw_GenSet_2"),
-      readTag("HMI_Modbus_Server_Tags_Kw_GenSet_3")
+      readTag("HMI_Modbus_Server_Tags_Kw_GenSet_3"),
+      readTag("HMI_Modbus_Server_Tags_Control_Mode"),           // Register 12: true=AUTO, false=MANUAL
+      readTag("HMI_Modbus_Server_Tags_Manual_Load_Bank_SP")     // Register 14: Manual setpoint feedback
     ]);
     
     // Update genset kW from Input Registers
     if (g1kW !== undefined) s.gen.g1_kW = g1kW;
     if (g2kW !== undefined) s.gen.g2_kW = g2kW;
     if (g3kW !== undefined) s.gen.g3_kW = g3kW;
+    
+    // Update control mode and manual setpoint
+    if (controlMode !== undefined) s.controlMode = controlMode;
+    if (manualSP !== undefined) s.manualSetpoint_kW = manualSP;
     
     // Fetch rest of state from general endpoint
     const res = await fetch(`${API_BASE}/api/state`);
@@ -426,10 +574,14 @@ async function fetchStateOnce() {
     
     // Preserve Input Register values and merge rest of state
     const genKW = { g1_kW: s.gen.g1_kW, g2_kW: s.gen.g2_kW, g3_kW: s.gen.g3_kW };
+    const ctrlMode = s.controlMode;
+    const manualSp = s.manualSetpoint_kW;
     mergeState(remote);
     s.gen.g1_kW = genKW.g1_kW;
     s.gen.g2_kW = genKW.g2_kW;
     s.gen.g3_kW = genKW.g3_kW;
+    s.controlMode = ctrlMode;
+    s.manualSetpoint_kW = manualSp;
     
     if (payload.meta?.lastWrite) s.wr.last = payload.meta.lastWrite;
     s.commsOK = true;
@@ -511,6 +663,98 @@ if (btnWriteHighLim) {
   btnWriteHighLim.onclick = () => writeConfigValue("HMI_Modbus_Server_Tags_KW_High_Limit_Input", "in_highlim_write");
 }
 
+/* ============================ MODE CONTROL ============================ */
+// Mode selection buttons
+async function setControlMode(isAuto) {
+  try {
+    const modeValue = isAuto ? 1 : 0; // 1 = AUTO, 0 = MANUAL
+    await writeTag("HMI_Modbus_Server_Tags_Control_Mode_Input", modeValue); // Register 13
+    console.log(`Control mode set to ${isAuto ? 'AUTO' : 'MANUAL'}`);
+    
+    // Immediate UI update (will be confirmed by next poll)
+    s.controlMode = isAuto;
+    paint();
+    
+    // Show notification
+    const statusEl = $("cfg_status");
+    const statusEl2 = $("cfg_status2");
+    if (statusEl) statusEl.textContent = `Switched to ${isAuto ? 'AUTO' : 'MANUAL'} mode ✓`;
+    if (statusEl2) statusEl2.textContent = `Switched to ${isAuto ? 'AUTO' : 'MANUAL'} mode ✓`;
+    setTimeout(() => {
+      if (statusEl) statusEl.textContent = "Ready";
+      if (statusEl2) statusEl2.textContent = "Ready";
+    }, 3000);
+  } catch (err) {
+    console.error("Mode change failed:", err);
+    pushAlarm(`Mode change failed: ${err.message}`);
+  }
+}
+
+const btnModeAuto = $("btn-mode-auto");
+const btnModeManual = $("btn-mode-manual");
+
+if (btnModeAuto) {
+  btnModeAuto.onclick = () => setControlMode(true);
+}
+
+if (btnModeManual) {
+  btnModeManual.onclick = () => setControlMode(false);
+}
+
+// Manual setpoint write
+async function writeManualSetpoint() {
+  const inputEl = $("in_manual_sp_write");
+  const statusEl = $("cfg_status");
+  const statusEl2 = $("cfg_status2");
+  
+  if (!inputEl) return;
+  
+  const value = parseInt(inputEl.value);
+  const maxAllowed = s.cfg.maxLB_kW || 2000;
+  
+  if (isNaN(value) || value < 0) {
+    if (statusEl) statusEl.textContent = "Invalid value (must be ≥ 0)";
+    if (statusEl2) statusEl2.textContent = "Invalid value";
+    return;
+  }
+  
+  if (value > maxAllowed) {
+    if (statusEl) statusEl.textContent = `Value exceeds max (${maxAllowed} kW)`;
+    if (statusEl2) statusEl2.textContent = "Value exceeds max";
+    return;
+  }
+  
+  if (statusEl) statusEl.textContent = "Writing manual setpoint...";
+  if (statusEl2) statusEl2.textContent = "Writing...";
+  
+  try {
+    await writeTag("HMI_Modbus_Server_Tags_Manual_Load_Bank_SP_Input", value); // Register 15
+    const timestamp = ts();
+    if (statusEl) statusEl.textContent = `Manual SP written: ${value} kW ✓`;
+    if (statusEl2) statusEl2.textContent = "Write OK ✓";
+    
+    const lastWriteEl = $("cfg_lastwrite");
+    const lastWriteEl2 = $("cfg_lastwrite2");
+    if (lastWriteEl) lastWriteEl.textContent = timestamp;
+    if (lastWriteEl2) lastWriteEl2.textContent = timestamp;
+    
+    setTimeout(() => {
+      if (statusEl) statusEl.textContent = "Ready";
+      if (statusEl2) statusEl2.textContent = "Ready";
+    }, 3000);
+  } catch (err) {
+    console.error("Manual setpoint write failed:", err);
+    if (statusEl) statusEl.textContent = "Write Failed: " + err.message;
+    if (statusEl2) statusEl2.textContent = "Write Failed";
+    pushAlarm(`Manual setpoint write failed: ${err.message}`);
+  }
+}
+
+const btnWriteManualSp = $("btn_write_manual_sp");
+if (btnWriteManualSp) {
+  btnWriteManualSp.onclick = writeManualSetpoint;
+}
+
 /* ============================ SIMPLE SIMULATION ============================ */
 /* Remove this block when bound to real tags. It drives values for demo. */
 function startDemoSimulation(){
@@ -532,28 +776,37 @@ function startDemoSimulation(){
     if (s.gen.g2_52A) s.gen.g2_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
     if (s.gen.g3_52A) s.gen.g3_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
 
-    // simple AUTO setpoint adjuster (mirrors PLC logic shape)
-    if (s.mode==="AUTO" && !s.burnActive && s.commsOK && !s.wr.busy){
-      const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
-      const avg = gensOnline? Math.round((s.gen.g1_kW+s.gen.g2_kW+s.gen.g3_kW)/gensOnline):0;
-      const high = Math.max(s.gen.g1_kW,s.gen.g2_kW,s.gen.g3_kW);
-      const genDiff = s.cfg.targetPerGenKW - avg;
-      const step = roundTo(s.cfg.step_kW, s.cfg.minHWStep_kW);
-      let next = s.lb.setpoint_kW;
-      const capOK = s.lb.setpoint_kW*100 <= s.lb.measured_kW*100 + s.cfg.devCap_scaled;
+    // Control mode logic
+    if (s.controlMode) {
+      // AUTO MODE: simple AUTO setpoint adjuster (mirrors PLC logic shape)
+      if (s.mode==="AUTO" && !s.burnActive && s.commsOK && !s.wr.busy){
+        const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
+        const avg = gensOnline? Math.round((s.gen.g1_kW+s.gen.g2_kW+s.gen.g3_kW)/gensOnline):0;
+        const high = Math.max(s.gen.g1_kW,s.gen.g2_kW,s.gen.g3_kW);
+        const genDiff = s.cfg.targetPerGenKW - avg;
+        const step = roundTo(s.cfg.step_kW, s.cfg.minHWStep_kW);
+        let next = s.lb.setpoint_kW;
+        const capOK = s.lb.setpoint_kW*100 <= s.lb.measured_kW*100 + s.cfg.devCap_scaled;
 
-      if (capOK){
-        if (high >= s.cfg.genHighLimit_kW && next >= 2*step) next -= 2*step;
-        else if (genDiff <= -step && next >= step) next -= step;
-        else if (genDiff > step && high <= s.cfg.genHighLimit_kW && next <= s.cfg.maxLB_kW - step) next += step;
-        else if (s.lb.setpoint_kW*100 > s.lb.measured_kW*100 + s.cfg.devCap_scaled) next -= 2*step;
-      } else if (s.lb.setpoint_kW*100 >= s.lb.measured_kW*100 + s.cfg.devCap_scaled + 10000) {
-        next -= 2*step;
+        if (capOK){
+          if (high >= s.cfg.genHighLimit_kW && next >= 2*step) next -= 2*step;
+          else if (genDiff <= -step && next >= step) next -= step;
+          else if (genDiff > step && high <= s.cfg.genHighLimit_kW && next <= s.cfg.maxLB_kW - step) next += step;
+          else if (s.lb.setpoint_kW*100 > s.lb.measured_kW*100 + s.cfg.devCap_scaled) next -= 2*step;
+        } else if (s.lb.setpoint_kW*100 >= s.lb.measured_kW*100 + s.cfg.devCap_scaled + 10000) {
+          next -= 2*step;
+        }
+        next = clamp(roundTo(next, s.cfg.minHWStep_kW), 0, Math.min(s.cfg.maxLB_kW, s.lb.available_kW));
+        if (next !== s.lb.setpoint_kW){
+          s.lb.setpoint_kW = next;
+          s.wr = {busy:false, ok:true, err:null, last:ts()};
+        }
       }
-      next = clamp(roundTo(next, s.cfg.minHWStep_kW), 0, Math.min(s.cfg.maxLB_kW, s.lb.available_kW));
-      if (next !== s.lb.setpoint_kW){
-        s.lb.setpoint_kW = next;
-        s.wr = {busy:false, ok:true, err:null, last:ts()};
+    } else {
+      // MANUAL MODE: setpoint follows manual setpoint (simulated)
+      // In simulation, manual setpoint changes are handled by the writeTag override below
+      if (s.manualSetpoint_kW !== s.lb.setpoint_kW) {
+        s.lb.setpoint_kW = clamp(s.manualSetpoint_kW, 0, s.cfg.maxLB_kW);
       }
     }
 
