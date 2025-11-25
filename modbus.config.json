@@ -119,6 +119,69 @@
       "writable": true,
       "read": true,
       "_comment": "Register 40011: GenSet_High_Limit"
+    },
+    "HMI_Modbus_Server_Tags_Control_Mode": {
+      "function": "holding",
+      "address": 12,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "controlMode",
+      "writable": false,
+      "_comment": "Register 40013 (12): Control Mode feedback (1=AUTO, 0=MANUAL) - RTAC to HMI"
+    },
+    "HMI_Modbus_Server_Tags_Control_Mode_Input": {
+      "function": "holding",
+      "address": 13,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "controlModeInput",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40014 (13): Control Mode command (1=AUTO, 0=MANUAL) - HMI to RTAC"
+    },
+    "HMI_Modbus_Server_Tags_Manual_Load_Bank_SP": {
+      "function": "holding",
+      "address": 14,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "manualSetpoint_kW",
+      "writable": false,
+      "_comment": "Register 40015 (14): Manual Load Bank Setpoint feedback (kW) - RTAC to HMI - 16-bit unsigned"
+    },
+    "HMI_Modbus_Server_Tags_Manual_Load_Bank_SP_Input": {
+      "function": "holding",
+      "address": 15,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "manualSetpointInput_kW",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40016 (15): Manual Load Bank Setpoint command (kW) - HMI to RTAC - 16-bit unsigned"
+    },
+    "HMI_Modbus_Server_Tags_Test_Mode": {
+      "function": "holding",
+      "address": 16,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "testMode",
+      "writable": false,
+      "_comment": "Register 40017 (16): Test Mode feedback (1=TEST/outputs disabled, 0=LIVE/outputs enabled) - RTAC to HMI"
+    },
+    "HMI_Modbus_Server_Tags_Test_Mode_Input": {
+      "function": "holding",
+      "address": 17,
+      "length": 1,
+      "datatype": "uint16",
+      "scale": 1,
+      "path": "testModeInput",
+      "writable": true,
+      "read": true,
+      "_comment": "Register 40018 (17): Test Mode command (1=TEST/outputs disabled, 0=LIVE/outputs enabled) - HMI to RTAC"
     }
   },
   "commands": {

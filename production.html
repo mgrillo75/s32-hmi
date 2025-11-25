@@ -65,18 +65,16 @@
         <b id="mode-label">TEST</b>
         <span id="burnin-pill" class="badge" style="display:none">BURN-IN <span id="burnin-eta">30</span>s</span>
       </div>
-      <button id="btn-toggle-mode" class="btn" style="font-size:12px;padding:6px 12px">
-        <span id="mode-toggle-label">Switch to Live</span>
-      </button>
-      <span class="caps">PLC:</span>
-      <span id="plc-mode-label" class="badge warn">TEST</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button id="btn-header-test" class="btn" style="font-size:11px;padding:5px 10px;background:#f59e0b;border-color:#d97706">🔒 TEST</button>
+        <button id="btn-header-live" class="btn secondary" style="font-size:11px;padding:5px 10px">⚡ LIVE</button>
+      </div>
       <span class="caps">Control:</span>
       <span id="ctrl-mode-label" class="badge ok">AUTO</span>
       <span class="caps">Status:</span>
       <span id="status-badge" class="badge ok">OK</span>
     </div>
     <div class="right">
-      <span class="sub">Mode: <b id="conn-mode">SIMULATION</b></span>
       <span class="sub">Comms: <b id="comms">Modbus OK</b></span>
       <span class="sub">Last Write: <b id="lastwrite">—</b></span>
     </div>
@@ -138,10 +136,10 @@
     </div>
   </div>
 
-  <!-- PLC TEST/LIVE MODE SELECTOR -->
+  <!-- RTAC TEST/LIVE MODE SELECTOR -->
   <div class="row r3" style="margin-top:14px">
     <div class="card" style="background:linear-gradient(135deg, #ff6b35 0%, #f7c59f 100%);color:#ffffff;border:3px solid #e55a2b">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🔒 PLC Output Mode</div>
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🔒 RTAC Output Mode</div>
       <div style="display:grid;gap:12px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <button id="btn-plc-test" class="btn" style="background:#f59e0b;border-color:#d97706;font-size:14px;font-weight:700">
@@ -153,8 +151,8 @@
         </div>
         <div style="padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
           <div class="sub" style="color:#ffffff;font-size:11px">
-            <b>TEST:</b> PLC outputs DISABLED - safe for testing<br>
-            <b>LIVE:</b> PLC outputs ENABLED - commands sent to load bank
+            <b>TEST:</b> RTAC outputs DISABLED - safe for testing<br>
+            <b>LIVE:</b> RTAC outputs ENABLED - commands sent to load bank
           </div>
         </div>
       </div>
@@ -188,11 +186,11 @@
       <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎯 Target Gen kW - AUTO MODE CONTROL</div>
       <div class="controls">
         <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">Current Target (Read from PLC)</label>
+          <label class="sub" style="color:#e0e7ff">Current Target (Read from RTAC)</label>
           <input id="in_target_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
         </div>
         <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">New Target (Write to PLC)</label>
+          <label class="sub" style="color:#e0e7ff">New Target (Write to RTAC)</label>
           <input id="in_target_write" type="number" step="10" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #4c51bf" value="0" />
         </div>
       </div>
@@ -235,11 +233,11 @@
       <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎛️ Manual Load Bank Control - DIRECT SETPOINT</div>
       <div class="controls">
         <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">Current Setpoint (Read from PLC)</label>
+          <label class="sub" style="color:#e0e7ff">Current Setpoint (Read from RTAC)</label>
           <input id="in_manual_sp_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
         </div>
         <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">New Setpoint (Write to PLC)</label>
+          <label class="sub" style="color:#e0e7ff">New Setpoint (Write to RTAC)</label>
           <input id="in_manual_sp_write" type="number" step="50" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #c026d3" value="0" />
         </div>
       </div>
@@ -333,12 +331,10 @@ const API_BASE = (typeof window !== "undefined" && window.HMI_MODBUS_API !== und
   : "http://localhost:4000";
 const STATE_POLL_MS = Number((typeof window !== "undefined" && window.HMI_STATE_POLL_MS) || 1000);
 
-// Toggle between simulation and live mode
-let isLiveMode = false;
-let BACKEND_ENABLED = false;
+// Backend is always enabled (live connection to Modbus)
+const BACKEND_ENABLED = true;
 
 async function readTag(tagName) {
-  if (!BACKEND_ENABLED) return undefined;
   const res = await fetch(`${API_BASE}/api/tags/${encodeURIComponent(tagName)}`);
   if (!res.ok) throw new Error(`readTag ${tagName} failed (${res.status})`);
   const payload = await res.json();
@@ -346,23 +342,6 @@ async function readTag(tagName) {
 }
 
 async function writeTag(tagName, value, meta = {}) {
-  if (!BACKEND_ENABLED) {
-    console.warn("writeTag (simulation mode)", tagName, value);
-    
-    // Simulate writes in simulation mode
-    if (tagName === "HMI_Modbus_Server_Tags_Control_Mode_Input") {
-      s.controlMode = value ? true : false;
-      console.log(`Simulation: Control mode set to ${s.controlMode ? 'AUTO' : 'MANUAL'}`);
-    } else if (tagName === "HMI_Modbus_Server_Tags_Manual_Load_Bank_SP_Input") {
-      s.manualSetpoint_kW = clamp(value, 0, s.cfg.maxLB_kW);
-      console.log(`Simulation: Manual setpoint set to ${s.manualSetpoint_kW} kW`);
-    } else if (tagName === "HMI_Modbus_Server_Tags_Test_Mode_Input") {
-      s.testMode = value ? true : false;
-      console.log(`Simulation: PLC mode set to ${s.testMode ? 'TEST' : 'LIVE'}`);
-    }
-    
-    return { offline: true, simulated: true };
-  }
   const res = await fetch(`${API_BASE}/api/write`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -380,10 +359,6 @@ async function writeTag(tagName, value, meta = {}) {
 }
 
 async function sendCommand(command, payload = {}) {
-  if (!BACKEND_ENABLED) {
-    console.warn("command suppressed (no backend)", command, payload);
-    return { offline: true };
-  }
   const res = await fetch(`${API_BASE}/api/command`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -408,11 +383,11 @@ const s = {
   alarms: [],
 
   // AUTO/MANUAL control mode
-  controlMode: true,    // true = AUTO, false = MANUAL (from PLC register 12)
-  manualSetpoint_kW: 0, // Manual load bank setpoint (from PLC register 14)
+  controlMode: true,    // true = AUTO, false = MANUAL (from RTAC register 12)
+  manualSetpoint_kW: 0, // Manual load bank setpoint (from RTAC register 14)
   
   // TEST/LIVE mode
-  testMode: true,       // true = TEST (outputs disabled), false = LIVE (outputs enabled) (from PLC register 16)
+  testMode: true,       // true = TEST (outputs disabled), false = LIVE (outputs enabled) (from RTAC register 16)
 
   cfg: {
     targetPerGenKW: 2050,
@@ -442,11 +417,11 @@ const $ = (id)=>document.getElementById(id);
 
 function paint() {
   // TESTING MODE: Only update elements that exist
-  // header - show PLC test/live mode in the pill
+  // header - show RTAC test/live mode in the pill
   const modeLabel = $("mode-label");
   if (modeLabel) modeLabel.textContent = s.testMode ? "TEST" : "LIVE";
   
-  // PLC Test/Live mode indicator
+  // RTAC Test/Live mode indicator
   const plcModeLabel = $("plc-mode-label");
   if (plcModeLabel) {
     plcModeLabel.textContent = s.testMode ? "TEST" : "LIVE";
@@ -555,9 +530,13 @@ function paint() {
     btnModeManual.style.borderColor = s.controlMode ? "#4a5568" : "#991b1b";
   }
 
-  // Update PLC Test/Live button styling
+  // Update RTAC Test/Live button styling (both header and panel)
   const btnPlcTest = $("btn-plc-test");
   const btnPlcLive = $("btn-plc-live");
+  const btnHeaderTest = $("btn-header-test");
+  const btnHeaderLive = $("btn-header-live");
+  
+  // Panel buttons
   if (btnPlcTest) {
     btnPlcTest.className = s.testMode ? "btn" : "btn secondary";
     btnPlcTest.style.background = s.testMode ? "#f59e0b" : "#718096";
@@ -567,6 +546,18 @@ function paint() {
     btnPlcLive.className = s.testMode ? "btn secondary" : "btn";
     btnPlcLive.style.background = s.testMode ? "#718096" : "#10b981";
     btnPlcLive.style.borderColor = s.testMode ? "#4a5568" : "#059669";
+  }
+  
+  // Header buttons
+  if (btnHeaderTest) {
+    btnHeaderTest.className = s.testMode ? "btn" : "btn secondary";
+    btnHeaderTest.style.background = s.testMode ? "#f59e0b" : "#718096";
+    btnHeaderTest.style.borderColor = s.testMode ? "#d97706" : "#4a5568";
+  }
+  if (btnHeaderLive) {
+    btnHeaderLive.className = s.testMode ? "btn secondary" : "btn";
+    btnHeaderLive.style.background = s.testMode ? "#718096" : "#10b981";
+    btnHeaderLive.style.borderColor = s.testMode ? "#4a5568" : "#059669";
   }
 }
 paint();
@@ -591,10 +582,9 @@ function mergeState(from, target = s) {
 
 let pollTimer = null;
 let pollInFlight = false;
-let simTimer = null;
 
 async function fetchStateOnce() {
-  if (!BACKEND_ENABLED || pollInFlight) return;
+  if (pollInFlight) return;
   pollInFlight = true;
   try {
     // Read genset kW values from Input Registers (30001, 30003, 30005)
@@ -815,7 +805,7 @@ async function setTestMode(isTest) {
   try {
     const modeValue = isTest ? 1 : 0; // 1 = TEST (outputs disabled), 0 = LIVE (outputs enabled)
     await writeTag("HMI_Modbus_Server_Tags_Test_Mode_Input", modeValue); // Register 17
-    console.log(`PLC mode set to ${isTest ? 'TEST' : 'LIVE'}`);
+    console.log(`RTAC mode set to ${isTest ? 'TEST' : 'LIVE'}`);
     
     // Immediate UI update (will be confirmed by next poll)
     s.testMode = isTest;
@@ -839,7 +829,10 @@ async function setTestMode(isTest) {
 
 const btnPlcTest = $("btn-plc-test");
 const btnPlcLive = $("btn-plc-live");
+const btnHeaderTest = $("btn-header-test");
+const btnHeaderLive = $("btn-header-live");
 
+// Panel buttons
 if (btnPlcTest) {
   btnPlcTest.onclick = () => setTestMode(true);
 }
@@ -847,129 +840,29 @@ if (btnPlcTest) {
 if (btnPlcLive) {
   btnPlcLive.onclick = () => {
     // Confirm before enabling LIVE mode
-    if (confirm("⚠️ WARNING: Switching to LIVE mode will enable PLC outputs to the load bank.\n\nAre you sure you want to proceed?")) {
+    if (confirm("⚠️ WARNING: Switching to LIVE mode will enable RTAC outputs to the load bank.\n\nAre you sure you want to proceed?")) {
       setTestMode(false);
     }
   };
 }
 
-/* ============================ SIMPLE SIMULATION ============================ */
-/* Remove this block when bound to real tags. It drives values for demo. */
-function startDemoSimulation(){
-  if (simTimer) clearInterval(simTimer);
-  simTimer = setInterval(()=>{
-    // burn-in
-    if (s.burnActive){ s.burnET++; if (s.burnET>=s.burnIn_s){ s.burnActive=false; } }
+// Header buttons
+if (btnHeaderTest) {
+  btnHeaderTest.onclick = () => setTestMode(true);
+}
 
-    // plant: measured follows setpoint with noise
-    const err = s.lb.setpoint_kW - s.lb.measured_kW;
-    const dv  = clamp(err*0.25, -120, 120);
-    s.lb.measured_kW = Math.round(clamp(s.lb.measured_kW + dv + (Math.random()-0.5)*10, 0, 5000));
-    s.lb.applied_kW  = Math.round(clamp(s.lb.measured_kW - (Math.random()-0.5)*10, 0, 5000));
-    s.lb.available_kW = Math.round(2400 + Math.sin(Date.now()/15000)*200);
-
-    // gens
-    const tgt=s.cfg.targetPerGenKW, jitter=()=>Math.round((Math.random()-0.5)*40);
-    if (s.gen.g1_52A) s.gen.g1_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
-    if (s.gen.g2_52A) s.gen.g2_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
-    if (s.gen.g3_52A) s.gen.g3_kW = clamp(tgt+jitter(),0,s.cfg.genHighLimit_kW+200);
-
-    // Control mode logic
-    if (s.controlMode) {
-      // AUTO MODE: simple AUTO setpoint adjuster (mirrors PLC logic shape)
-    if (s.mode==="AUTO" && !s.burnActive && s.commsOK && !s.wr.busy){
-      const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
-      const avg = gensOnline? Math.round((s.gen.g1_kW+s.gen.g2_kW+s.gen.g3_kW)/gensOnline):0;
-      const high = Math.max(s.gen.g1_kW,s.gen.g2_kW,s.gen.g3_kW);
-      const genDiff = s.cfg.targetPerGenKW - avg;
-      const step = roundTo(s.cfg.step_kW, s.cfg.minHWStep_kW);
-      let next = s.lb.setpoint_kW;
-      const capOK = s.lb.setpoint_kW*100 <= s.lb.measured_kW*100 + s.cfg.devCap_scaled;
-
-      if (capOK){
-        if (high >= s.cfg.genHighLimit_kW && next >= 2*step) next -= 2*step;
-        else if (genDiff <= -step && next >= step) next -= step;
-        else if (genDiff > step && high <= s.cfg.genHighLimit_kW && next <= s.cfg.maxLB_kW - step) next += step;
-        else if (s.lb.setpoint_kW*100 > s.lb.measured_kW*100 + s.cfg.devCap_scaled) next -= 2*step;
-      } else if (s.lb.setpoint_kW*100 >= s.lb.measured_kW*100 + s.cfg.devCap_scaled + 10000) {
-        next -= 2*step;
-      }
-      next = clamp(roundTo(next, s.cfg.minHWStep_kW), 0, Math.min(s.cfg.maxLB_kW, s.lb.available_kW));
-      if (next !== s.lb.setpoint_kW){
-        s.lb.setpoint_kW = next;
-        s.wr = {busy:false, ok:true, err:null, last:ts()};
-        }
-      }
-    } else {
-      // MANUAL MODE: setpoint follows manual setpoint (simulated)
-      // In simulation, manual setpoint changes are handled by the writeTag override below
-      if (s.manualSetpoint_kW !== s.lb.setpoint_kW) {
-        s.lb.setpoint_kW = clamp(s.manualSetpoint_kW, 0, s.cfg.maxLB_kW);
-      }
+if (btnHeaderLive) {
+  btnHeaderLive.onclick = () => {
+    // Confirm before enabling LIVE mode
+    if (confirm("⚠️ WARNING: Switching to LIVE mode will enable RTAC outputs to the load bank.\n\nAre you sure you want to proceed?")) {
+      setTestMode(false);
     }
-
-    paint();
-  }, 1000);
-}
-
-function stopDemoSimulation(){
-  if (simTimer) {
-    clearInterval(simTimer);
-    simTimer = null;
-  }
-}
-
-/* ============================ MODE TOGGLE ============================ */
-function updateModeUI() {
-  const connModeEl = $("conn-mode");
-  const modeToggleLabelEl = $("mode-toggle-label");
-  
-  if (connModeEl) {
-    connModeEl.textContent = isLiveMode ? "LIVE (Modbus TCP)" : "SIMULATION";
-  }
-  if (modeToggleLabelEl) {
-    modeToggleLabelEl.textContent = isLiveMode ? "Switch to Simulation" : "Switch to Live";
-  }
-}
-
-function toggleMode() {
-  isLiveMode = !isLiveMode;
-  BACKEND_ENABLED = isLiveMode;
-  
-  // Stop current mode
-  stopBackendSync();
-  stopDemoSimulation();
-  
-  // Clear any alarms from previous mode
-  s.alarms = [];
-  
-  // Start new mode
-  if (isLiveMode) {
-    console.log("Switching to LIVE mode (Modbus TCP)");
-    startBackendSync();
-  } else {
-    console.log("Switching to SIMULATION mode");
-    s.commsOK = true; // Reset comms status for simulation
-    startDemoSimulation();
-  }
-  
-  updateModeUI();
-  paint();
-}
-
-// Button handler
-const btnToggleMode = $("btn-toggle-mode");
-if (btnToggleMode) {
-  btnToggleMode.onclick = toggleMode;
+  };
 }
 
 /* ============================ INITIALIZATION ============================ */
-updateModeUI();
-if (isLiveMode) {
-  startBackendSync();
-} else {
-  startDemoSimulation();
-}
+// Start backend sync (live connection to Modbus)
+startBackendSync();
 
 </script>
 </body>

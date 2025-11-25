@@ -21,6 +21,12 @@ const defaultState = {
   burnET: 0,
   burnActive: true,
   alarms: [],
+  controlMode: 1,  // 1 = AUTO, 0 = MANUAL
+  controlModeInput: 1,
+  manualSetpoint_kW: 0,
+  manualSetpointInput_kW: 0,
+  testMode: 1,     // 1 = TEST (outputs disabled), 0 = LIVE (outputs enabled)
+  testModeInput: 1,
   cfg: {
     targetPerGenKW: 2050,
     maxLB_kW: 2000,
@@ -276,7 +282,7 @@ async function pollAllTags() {
       if (cfg.path) setByPath(state, cfg.path, decoded);
       
       // Log config read values to see if they change
-      if (logDetail && (tagName.includes("Target_kW") || tagName.includes("Load_Bank_Cap") || tagName.includes("High_Limit"))) {
+      if (logDetail && (tagName.includes("Target_kW") || tagName.includes("Load_Bank_Cap") || tagName.includes("High_Limit") || tagName.includes("Control_Mode") || tagName.includes("Manual_Load_Bank") || tagName.includes("Test_Mode"))) {
         console.log(`   ${tagName}: ${decoded}`);
       }
     }
