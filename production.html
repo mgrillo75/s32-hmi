@@ -52,6 +52,68 @@
   .right{display:flex;gap:18px;align-items:center}
   .caps{font-variant:all-small-caps;letter-spacing:.8px;color:#4a5568;font-weight:600}
   .help{color:#4a5568;font-size:12px}
+  
+  /* Test/Live Toggle Switch */
+  .mode-toggle-container {
+    display:flex;align-items:center;gap:8px;
+  }
+  .mode-toggle {
+    position:relative;width:140px;height:44px;background:#2d3748;border-radius:22px;
+    cursor:pointer;box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 2px 4px rgba(0,0,0,0.2);
+    border:3px solid #4a5568;overflow:hidden;
+  }
+  .mode-toggle::before {
+    content:'';position:absolute;top:3px;left:3px;width:64px;height:34px;
+    background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);border-radius:17px;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 2px 8px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .mode-toggle.live::before {
+    left:69px;background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);
+  }
+  .mode-toggle-labels {
+    position:absolute;top:0;left:0;right:0;bottom:0;display:flex;
+    pointer-events:none;z-index:1;
+  }
+  .mode-toggle-labels span {
+    flex:1;display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;letter-spacing:0.5px;
+    transition:color 0.3s,text-shadow 0.3s;
+  }
+  .mode-toggle .label-test {color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
+  .mode-toggle .label-live {color:#64748b;}
+  .mode-toggle.live .label-test {color:#64748b;text-shadow:none;}
+  .mode-toggle.live .label-live {color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
+  
+  /* Large Mode Toggle for Panel */
+  .mode-toggle-lg {
+    position:relative;width:280px;height:64px;background:#1e293b;border-radius:32px;
+    cursor:pointer;box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 4px 8px rgba(0,0,0,0.3);
+    border:4px solid #475569;overflow:hidden;margin:0 auto;
+  }
+  .mode-toggle-lg::before {
+    content:'';position:absolute;top:4px;left:4px;width:130px;height:52px;
+    background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);border-radius:26px;
+    transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 4px 12px rgba(0,0,0,0.4),inset 0 2px 0 rgba(255,255,255,0.2);
+  }
+  .mode-toggle-lg.live::before {
+    left:138px;background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);
+  }
+  .mode-toggle-lg .mode-toggle-labels span {
+    font-size:16px;font-weight:800;letter-spacing:1px;
+  }
+  .mode-toggle-lg .label-test {color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);}
+  .mode-toggle-lg .label-live {color:#64748b;}
+  .mode-toggle-lg.live .label-test {color:#64748b;text-shadow:none;}
+  .mode-toggle-lg.live .label-live {color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);}
+  
+  /* Status indicator glow */
+  .mode-toggle:not(.live) {box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 20px rgba(245,158,11,0.4);}
+  .mode-toggle.live {box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 20px rgba(34,197,94,0.4);}
+  .mode-toggle-lg:not(.live) {box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 0 30px rgba(245,158,11,0.5);}
+  .mode-toggle-lg.live {box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 0 30px rgba(34,197,94,0.5);}
+  
   @media (max-width:1200px){.r4{grid-template-columns:repeat(2,1fr)} .r3{grid-template-columns:1fr}}
 </style>
 </head>
@@ -60,14 +122,14 @@
 
   <!-- HEADER -->
   <div class="hdr card">
-    <div style="display:flex;gap:12px;align-items:center">
-      <div id="mode-pill" class="pill">
-        <b id="mode-label">TEST</b>
-        <span id="burnin-pill" class="badge" style="display:none">BURN-IN <span id="burnin-eta">30</span>s</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <button id="btn-header-test" class="btn" style="font-size:11px;padding:5px 10px;background:#f59e0b;border-color:#d97706">🔒 TEST</button>
-        <button id="btn-header-live" class="btn secondary" style="font-size:11px;padding:5px 10px">⚡ LIVE</button>
+    <div style="display:flex;gap:16px;align-items:center">
+      <div class="mode-toggle-container">
+        <div id="header-mode-toggle" class="mode-toggle" title="Click to toggle between TEST and LIVE mode">
+          <div class="mode-toggle-labels">
+            <span class="label-test">🔒 TEST</span>
+            <span class="label-live">⚡ LIVE</span>
+          </div>
+        </div>
       </div>
       <span class="caps">Control:</span>
       <span id="ctrl-mode-label" class="badge ok">AUTO</span>
@@ -138,22 +200,19 @@
 
   <!-- RTAC TEST/LIVE MODE SELECTOR -->
   <div class="row r3" style="margin-top:14px">
-    <div class="card" style="background:linear-gradient(135deg, #ff6b35 0%, #f7c59f 100%);color:#ffffff;border:3px solid #e55a2b">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🔒 RTAC Output Mode</div>
-      <div style="display:grid;gap:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <button id="btn-plc-test" class="btn" style="background:#f59e0b;border-color:#d97706;font-size:14px;font-weight:700">
-            🔒 TEST Mode
-          </button>
-          <button id="btn-plc-live" class="btn secondary" style="font-size:14px;font-weight:700">
-            ⚡ LIVE Mode
-          </button>
-        </div>
-        <div style="padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
-          <div class="sub" style="color:#ffffff;font-size:11px">
-            <b>TEST:</b> RTAC outputs DISABLED - safe for testing<br>
-            <b>LIVE:</b> RTAC outputs ENABLED - commands sent to load bank
+    <div class="card" style="background:#1e293b;color:#ffffff;border:3px solid #475569">
+      <div class="title" style="color:#94a3b8;font-size:14px;font-weight:600;text-align:center;margin-bottom:16px">RTAC OUTPUT MODE</div>
+      <div style="display:grid;gap:16px">
+        <div id="panel-mode-toggle" class="mode-toggle-lg" title="Click to toggle between TEST and LIVE mode">
+          <div class="mode-toggle-labels">
+            <span class="label-test">🔒 TEST</span>
+            <span class="label-live">⚡ LIVE</span>
           </div>
+        </div>
+        <div id="mode-status-box" style="padding:14px;background:#0f172a;border-radius:12px;text-align:center;border:2px solid #f59e0b">
+          <div id="mode-status-icon" style="font-size:28px;margin-bottom:6px">🔒</div>
+          <div id="mode-status-text" style="font-size:14px;font-weight:700;color:#f59e0b">OUTPUTS DISABLED</div>
+          <div id="mode-status-desc" style="font-size:11px;color:#94a3b8;margin-top:4px">Safe for testing - no commands sent</div>
         </div>
       </div>
     </div>
@@ -416,18 +475,6 @@ const ts=()=>new Date().toISOString().replace("T"," ").slice(0,19)+"Z";
 const $ = (id)=>document.getElementById(id);
 
 function paint() {
-  // TESTING MODE: Only update elements that exist
-  // header - show RTAC test/live mode in the pill
-  const modeLabel = $("mode-label");
-  if (modeLabel) modeLabel.textContent = s.testMode ? "TEST" : "LIVE";
-  
-  // RTAC Test/Live mode indicator
-  const plcModeLabel = $("plc-mode-label");
-  if (plcModeLabel) {
-    plcModeLabel.textContent = s.testMode ? "TEST" : "LIVE";
-    plcModeLabel.className = "badge " + (s.testMode ? "warn" : "ok");
-  }
-  
   // Control mode indicator
   const ctrlModeLabel = $("ctrl-mode-label");
   if (ctrlModeLabel) {
@@ -530,34 +577,41 @@ function paint() {
     btnModeManual.style.borderColor = s.controlMode ? "#4a5568" : "#991b1b";
   }
 
-  // Update RTAC Test/Live button styling (both header and panel)
-  const btnPlcTest = $("btn-plc-test");
-  const btnPlcLive = $("btn-plc-live");
-  const btnHeaderTest = $("btn-header-test");
-  const btnHeaderLive = $("btn-header-live");
+  // Update Test/Live toggle switches
+  const headerToggle = $("header-mode-toggle");
+  const panelToggle = $("panel-mode-toggle");
+  const modeStatusBox = $("mode-status-box");
+  const modeStatusIcon = $("mode-status-icon");
+  const modeStatusText = $("mode-status-text");
+  const modeStatusDesc = $("mode-status-desc");
   
-  // Panel buttons
-  if (btnPlcTest) {
-    btnPlcTest.className = s.testMode ? "btn" : "btn secondary";
-    btnPlcTest.style.background = s.testMode ? "#f59e0b" : "#718096";
-    btnPlcTest.style.borderColor = s.testMode ? "#d97706" : "#4a5568";
+  // Update toggle visual state
+  if (headerToggle) {
+    headerToggle.classList.toggle("live", !s.testMode);
   }
-  if (btnPlcLive) {
-    btnPlcLive.className = s.testMode ? "btn secondary" : "btn";
-    btnPlcLive.style.background = s.testMode ? "#718096" : "#10b981";
-    btnPlcLive.style.borderColor = s.testMode ? "#4a5568" : "#059669";
+  if (panelToggle) {
+    panelToggle.classList.toggle("live", !s.testMode);
   }
   
-  // Header buttons
-  if (btnHeaderTest) {
-    btnHeaderTest.className = s.testMode ? "btn" : "btn secondary";
-    btnHeaderTest.style.background = s.testMode ? "#f59e0b" : "#718096";
-    btnHeaderTest.style.borderColor = s.testMode ? "#d97706" : "#4a5568";
-  }
-  if (btnHeaderLive) {
-    btnHeaderLive.className = s.testMode ? "btn secondary" : "btn";
-    btnHeaderLive.style.background = s.testMode ? "#718096" : "#10b981";
-    btnHeaderLive.style.borderColor = s.testMode ? "#4a5568" : "#059669";
+  // Update status box
+  if (modeStatusBox) {
+    if (s.testMode) {
+      modeStatusBox.style.borderColor = "#f59e0b";
+      if (modeStatusIcon) modeStatusIcon.textContent = "🔒";
+      if (modeStatusText) {
+        modeStatusText.textContent = "OUTPUTS DISABLED";
+        modeStatusText.style.color = "#f59e0b";
+      }
+      if (modeStatusDesc) modeStatusDesc.textContent = "Safe for testing - no commands sent";
+    } else {
+      modeStatusBox.style.borderColor = "#22c55e";
+      if (modeStatusIcon) modeStatusIcon.textContent = "⚡";
+      if (modeStatusText) {
+        modeStatusText.textContent = "OUTPUTS ENABLED";
+        modeStatusText.style.color = "#22c55e";
+      }
+      if (modeStatusDesc) modeStatusDesc.textContent = "LIVE - Commands sent to load bank";
+    }
   }
 }
 paint();
@@ -827,37 +881,28 @@ async function setTestMode(isTest) {
   }
 }
 
-const btnPlcTest = $("btn-plc-test");
-const btnPlcLive = $("btn-plc-live");
-const btnHeaderTest = $("btn-header-test");
-const btnHeaderLive = $("btn-header-live");
-
-// Panel buttons
-if (btnPlcTest) {
-  btnPlcTest.onclick = () => setTestMode(true);
-}
-
-if (btnPlcLive) {
-  btnPlcLive.onclick = () => {
-    // Confirm before enabling LIVE mode
+// Toggle switch click handlers
+function handleModeToggleClick() {
+  if (s.testMode) {
+    // Currently in TEST mode, switching to LIVE - show confirmation
     if (confirm("⚠️ WARNING: Switching to LIVE mode will enable RTAC outputs to the load bank.\n\nAre you sure you want to proceed?")) {
       setTestMode(false);
     }
-  };
+  } else {
+    // Currently in LIVE mode, switching to TEST - no confirmation needed
+    setTestMode(true);
+  }
 }
 
-// Header buttons
-if (btnHeaderTest) {
-  btnHeaderTest.onclick = () => setTestMode(true);
+const headerModeToggle = $("header-mode-toggle");
+const panelModeToggle = $("panel-mode-toggle");
+
+if (headerModeToggle) {
+  headerModeToggle.onclick = handleModeToggleClick;
 }
 
-if (btnHeaderLive) {
-  btnHeaderLive.onclick = () => {
-    // Confirm before enabling LIVE mode
-    if (confirm("⚠️ WARNING: Switching to LIVE mode will enable RTAC outputs to the load bank.\n\nAre you sure you want to proceed?")) {
-      setTestMode(false);
-    }
-  };
+if (panelModeToggle) {
+  panelModeToggle.onclick = handleModeToggleClick;
 }
 
 /* ============================ INITIALIZATION ============================ */
