@@ -7,60 +7,60 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   :root {
-    --bg:#d3d3d3; --panel:#171a21; --ink:#e8ecf1; --muted:#96a0b5;
-    --ok:#1db954; --warn:#ffb020; --bad:#ff4d4f; --accent:#4ea1ff;
-    --card:#1b1f27; --chip:#232836; --chip2:#0e223a;
+    --bg:#0a1628; --panel:#0f1d30; --ink:#e0f2fe; --muted:#60a5fa;
+    --ok:#10b981; --warn:#fbbf24; --bad:#ef4444; --accent:#06b6d4;
+    --card:#0c1e33; --chip:#0d2438; --chip2:#082139;
     --br:16px; --pad:14px;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
   }
-  html,body{height:100%;background:var(--bg);color:#2d3748;margin:0}
-  b{color:#1a202c}
+  html,body{height:100%;background:var(--bg);color:#bae6fd;margin:0}
+  b{color:#e0f2fe}
   .wrap{padding:18px;max-width:1600px;margin:0 auto}
   .row{display:grid;grid-gap:14px}
   .r4{grid-template-columns:repeat(4,minmax(0,1fr))}
   .r3{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .card{background:#ffffff;border-radius:var(--br);padding:var(--pad);box-shadow:0 2px 4px rgba(0,0,0,0.1);border:1px solid #e2e8f0}
+  .card{background:linear-gradient(135deg, #0c1e33 0%, #081627 100%);border-radius:var(--br);padding:var(--pad);box-shadow:0 4px 12px rgba(0,0,0,0.4),0 0 20px rgba(6,182,212,0.1);border:2px solid #0e3a5c}
   .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-  .pill{display:inline-flex;gap:6px;align-items:center;background:#e2e8f0;border-radius:999px;padding:6px 10px;font-size:12px;color:#1a202c;font-weight:600;border:1px solid #cbd5e0}
-  .badge{border:2px solid #cbd5e0;border-radius:999px;padding:3px 8px;font-size:11px;color:#2d3748;background:#f7fafc;font-weight:600}
-  .badge.ok{border-color:#22c55e;color:#15803d;background:#dcfce7;font-weight:700}
-  .badge.bad{border-color:#ef4444;color:#b91c1c;background:#fee2e2;font-weight:700}
-  .badge.warn{border-color:#f59e0b;color:#b45309;background:#fef3c7;font-weight:700}
-  .title{font-size:14px;color:#4a5568;margin-bottom:8px;font-weight:600}
-  .big{font-size:32px;font-weight:700;letter-spacing:0.2px;color:#1a202c}
-  .sub{font-size:12px;color:#4a5568}
+  .pill{display:inline-flex;gap:6px;align-items:center;background:rgba(6,182,212,0.15);border-radius:999px;padding:6px 10px;font-size:12px;color:#7dd3fc;font-weight:600;border:1px solid #0e7490}
+  .badge{border:2px solid #0e7490;border-radius:999px;padding:3px 8px;font-size:11px;color:#7dd3fc;background:rgba(14,116,144,0.2);font-weight:600}
+  .badge.ok{border-color:#10b981;color:#34d399;background:rgba(16,185,129,0.2);font-weight:700}
+  .badge.bad{border-color:#ef4444;color:#fca5a5;background:rgba(239,68,68,0.2);font-weight:700}
+  .badge.warn{border-color:#fbbf24;color:#fcd34d;background:rgba(251,191,36,0.2);font-weight:700}
+  .title{font-size:14px;color:#7dd3fc;margin-bottom:8px;font-weight:600}
+  .big{font-size:32px;font-weight:700;letter-spacing:0.2px;color:#e0f2fe}
+  .sub{font-size:12px;color:#60a5fa}
   .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .k{display:grid;gap:4px}
   .controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .ctrl{display:grid;gap:6px}
-  input[type=number]{background:#ffffff;border:2px solid #4a5568;border-radius:10px;color:#1a202c;
-    padding:8px 10px;font-size:14px;outline:none;font-weight:500}
+  input[type=number]{background:rgba(8,33,57,0.8);border:2px solid #0e7490;border-radius:10px;color:#e0f2fe;
+    padding:8px 10px;font-size:14px;outline:none;font-weight:500;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)}
   input[disabled]{opacity:.6}
-  .btn{cursor:pointer;border:2px solid #4a5568;background:#3182ce;color:#ffffff;
-    padding:8px 12px;border-radius:10px;font-size:14px;font-weight:600}
+  .btn{cursor:pointer;border:2px solid #0891b2;background:linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);color:#ffffff;
+    padding:8px 12px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(8,145,178,0.4)}
   .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.secondary{background:#718096;border-color:#4a5568;color:#ffffff}
-  .btn.danger{background:#dc2626;border-color:#991b1b;color:#ffffff}
+  .btn.secondary{background:linear-gradient(135deg, #334155 0%, #475569 100%);border-color:#475569;color:#e0f2fe}
+  .btn.danger{background:linear-gradient(135deg, #dc2626 0%, #ef4444 100%);border-color:#991b1b;color:#ffffff}
   .btn.block{width:100%}
-  .row-perm{display:grid;grid-template-columns:repeat(1,1fr);gap:6px;font-size:13px;color:#2d3748}
-  .ok{color:#15803d;font-weight:700} .bad{color:#b91c1c;font-weight:700}
+  .row-perm{display:grid;grid-template-columns:repeat(1,1fr);gap:6px;font-size:13px;color:#7dd3fc}
+  .ok{color:#34d399;font-weight:700} .bad{color:#fca5a5;font-weight:700}
   .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
   .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .tile{background:#ffffff;border:2px solid #cbd5e0;border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+  .tile{background:rgba(8,33,57,0.6);border:2px solid #0e3a5c;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
   .kv .big{line-height:1}
-  small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;color:#4a5568;font-weight:500}
+  small.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;color:#60a5fa;font-weight:500}
   .right{display:flex;gap:18px;align-items:center}
-  .caps{font-variant:all-small-caps;letter-spacing:.8px;color:#4a5568;font-weight:600}
-  .help{color:#4a5568;font-size:12px}
+  .caps{font-variant:all-small-caps;letter-spacing:.8px;color:#60a5fa;font-weight:600}
+  .help{color:#60a5fa;font-size:12px}
   
   /* Test/Live Toggle Switch */
   .mode-toggle-container {
     display:flex;align-items:center;gap:8px;
   }
   .mode-toggle {
-    position:relative;width:140px;height:44px;background:#2d3748;border-radius:22px;
-    cursor:pointer;box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 2px 4px rgba(0,0,0,0.2);
-    border:3px solid #4a5568;overflow:hidden;
+    position:relative;width:140px;height:44px;background:#0c1e33;border-radius:22px;
+    cursor:pointer;box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 2px 8px rgba(6,182,212,0.3);
+    border:3px solid #0e7490;overflow:hidden;
   }
   .mode-toggle::before {
     content:'';position:absolute;top:3px;left:3px;width:64px;height:34px;
@@ -80,16 +80,16 @@
     font-size:12px;font-weight:800;letter-spacing:0.5px;
     transition:color 0.3s,text-shadow 0.3s;
   }
-  .mode-toggle .label-test {color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
-  .mode-toggle .label-live {color:#64748b;}
-  .mode-toggle.live .label-test {color:#64748b;text-shadow:none;}
-  .mode-toggle.live .label-live {color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.3);}
+  .mode-toggle .label-test {color:#fbbf24;text-shadow:0 2px 4px rgba(0,0,0,0.5);}
+  .mode-toggle .label-live {color:#334155;}
+  .mode-toggle.live .label-test {color:#334155;text-shadow:none;}
+  .mode-toggle.live .label-live {color:#34d399;text-shadow:0 2px 4px rgba(0,0,0,0.5);}
   
   /* Large Mode Toggle for Panel */
   .mode-toggle-lg {
-    position:relative;width:280px;height:64px;background:#1e293b;border-radius:32px;
-    cursor:pointer;box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 4px 8px rgba(0,0,0,0.3);
-    border:4px solid #475569;overflow:hidden;margin:0 auto;
+    position:relative;width:280px;height:64px;background:#0c1e33;border-radius:32px;
+    cursor:pointer;box-shadow:inset 0 4px 12px rgba(0,0,0,0.7),0 4px 12px rgba(6,182,212,0.4);
+    border:4px solid #0e7490;overflow:hidden;margin:0 auto;
   }
   .mode-toggle-lg::before {
     content:'';position:absolute;top:4px;left:4px;width:130px;height:52px;
@@ -103,29 +103,62 @@
   .mode-toggle-lg .mode-toggle-labels span {
     font-size:16px;font-weight:800;letter-spacing:1px;
   }
-  .mode-toggle-lg .label-test {color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);}
-  .mode-toggle-lg .label-live {color:#64748b;}
-  .mode-toggle-lg.live .label-test {color:#64748b;text-shadow:none;}
-  .mode-toggle-lg.live .label-live {color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.4);}
+  .mode-toggle-lg .label-test {color:#fbbf24;text-shadow:0 2px 6px rgba(0,0,0,0.6);}
+  .mode-toggle-lg .label-live {color:#334155;}
+  .mode-toggle-lg.live .label-test {color:#334155;text-shadow:none;}
+  .mode-toggle-lg.live .label-live {color:#34d399;text-shadow:0 2px 6px rgba(0,0,0,0.6);}
+  
+  /* Control Mode Toggle (Auto/Manual) - Same style as Test/Live */
+  .control-mode-toggle {
+    position:relative;width:160px;height:44px;background:#0c1e33;border-radius:22px;
+    cursor:pointer;box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 2px 8px rgba(6,182,212,0.3);
+    border:3px solid #0e7490;overflow:hidden;
+  }
+  .control-mode-toggle::before {
+    content:'';position:absolute;top:3px;left:3px;width:74px;height:34px;
+    background:linear-gradient(180deg,#3b82f6 0%,#2563eb 100%);border-radius:17px;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow:0 2px 8px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .control-mode-toggle.manual::before {
+    left:79px;background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);
+  }
+  .control-mode-toggle .control-toggle-labels {
+    position:absolute;top:0;left:0;right:0;bottom:0;display:flex;
+    pointer-events:none;z-index:1;
+  }
+  .control-mode-toggle .control-toggle-labels span {
+    flex:1;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;letter-spacing:0.5px;
+    transition:color 0.3s,text-shadow 0.3s;
+  }
+  .control-mode-toggle .label-auto {color:#7dd3fc;text-shadow:0 2px 4px rgba(0,0,0,0.5);}
+  .control-mode-toggle .label-manual {color:#334155;}
+  .control-mode-toggle.manual .label-auto {color:#334155;text-shadow:none;}
+  .control-mode-toggle.manual .label-manual {color:#fbbf24;text-shadow:0 2px 4px rgba(0,0,0,0.5);}
+  
+  /* Status indicator glow for control mode toggle */
+  .control-mode-toggle:not(.manual) {box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 0 20px rgba(125,211,252,0.6);}
+  .control-mode-toggle.manual {box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 0 20px rgba(251,191,36,0.6);}
   
   /* Status indicator glow */
-  .mode-toggle:not(.live) {box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 20px rgba(245,158,11,0.4);}
-  .mode-toggle.live {box-shadow:inset 0 2px 8px rgba(0,0,0,0.4),0 0 20px rgba(34,197,94,0.4);}
-  .mode-toggle-lg:not(.live) {box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 0 30px rgba(245,158,11,0.5);}
-  .mode-toggle-lg.live {box-shadow:inset 0 4px 12px rgba(0,0,0,0.5),0 0 30px rgba(34,197,94,0.5);}
+  .mode-toggle:not(.live) {box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 0 20px rgba(251,191,36,0.6);}
+  .mode-toggle.live {box-shadow:inset 0 2px 8px rgba(0,0,0,0.6),0 0 20px rgba(52,211,153,0.6);}
+  .mode-toggle-lg:not(.live) {box-shadow:inset 0 4px 12px rgba(0,0,0,0.7),0 0 30px rgba(251,191,36,0.7);}
+  .mode-toggle-lg.live {box-shadow:inset 0 4px 12px rgba(0,0,0,0.7),0 0 30px rgba(52,211,153,0.7);}
   
   /* Genset Cards */
   .genset-card {
-    background:#1e293b;border-radius:16px;padding:0;overflow:hidden;
-    border:3px solid #475569;box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    background:linear-gradient(135deg, #0c1e33 0%, #081627 100%);border-radius:16px;padding:0;overflow:hidden;
+    border:3px solid #0e7490;box-shadow:0 4px 20px rgba(0,0,0,0.5),0 0 20px rgba(6,182,212,0.2);
     transition:all 0.3s ease;
   }
   .genset-card-header {
-    padding:10px 14px;background:#0f172a;border-bottom:2px solid #334155;
+    padding:10px 14px;background:rgba(8,22,39,0.9);border-bottom:2px solid #0e7490;
     display:flex;align-items:center;justify-content:space-between;
   }
   .genset-card-header .title {
-    color:#e2e8f0;font-size:16px;font-weight:700;margin:0;letter-spacing:0.5px;
+    color:#7dd3fc;font-size:16px;font-weight:700;margin:0;letter-spacing:0.5px;text-shadow:0 0 10px rgba(125,211,252,0.5);
   }
   .genset-card-header .breaker-badge {
     padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;
@@ -141,12 +174,12 @@
     position:relative;padding:12px;transition:background 0.4s ease;
   }
   .genset-image-container.cb-closed {
-    background:linear-gradient(135deg, rgba(220,38,38,0.15) 0%, rgba(153,27,27,0.25) 100%);
-    box-shadow:inset 0 0 40px rgba(220,38,38,0.2);
+    background:linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.35) 100%);
+    box-shadow:inset 0 0 50px rgba(220,38,38,0.4);
   }
   .genset-image-container.cb-open {
-    background:linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(22,163,74,0.15) 100%);
-    box-shadow:inset 0 0 40px rgba(34,197,94,0.1);
+    background:linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(6,182,212,0.2) 100%);
+    box-shadow:inset 0 0 50px rgba(6,182,212,0.2);
   }
   .genset-image {
     width:100%;height:auto;border-radius:8px;display:block;
@@ -157,47 +190,68 @@
     display:flex;justify-content:space-between;align-items:flex-start;
   }
   .genset-kw-display {
-    background:rgba(15,23,42,0.9);backdrop-filter:blur(8px);
-    padding:8px 14px;border-radius:10px;border:2px solid #475569;
+    background:rgba(8,22,39,0.95);backdrop-filter:blur(10px);
+    padding:8px 14px;border-radius:10px;border:2px solid #0e7490;box-shadow:0 0 15px rgba(6,182,212,0.4);
   }
   .genset-kw-display .kw-value {
-    font-size:28px;font-weight:800;color:#fff;line-height:1;
+    font-size:28px;font-weight:800;color:#7dd3fc;line-height:1;text-shadow:0 0 10px rgba(125,211,252,0.6);
   }
   .genset-kw-display .kw-unit {
-    font-size:14px;color:#94a3b8;font-weight:600;
+    font-size:14px;color:#60a5fa;font-weight:600;
   }
   .genset-pct-display {
-    background:rgba(15,23,42,0.9);backdrop-filter:blur(8px);
-    padding:6px 10px;border-radius:8px;border:2px solid #475569;
+    background:rgba(8,22,39,0.95);backdrop-filter:blur(10px);
+    padding:6px 10px;border-radius:8px;border:2px solid #0e7490;box-shadow:0 0 15px rgba(6,182,212,0.4);
     text-align:center;
   }
   .genset-pct-display .pct-value {
-    font-size:20px;font-weight:800;color:#fff;line-height:1;
+    font-size:20px;font-weight:800;color:#7dd3fc;line-height:1;text-shadow:0 0 10px rgba(125,211,252,0.6);
   }
   .genset-pct-display .pct-label {
-    font-size:9px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
+    font-size:9px;color:#60a5fa;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;
   }
   .genset-card-footer {
-    padding:10px 14px;background:#0f172a;border-top:2px solid #334155;
+    padding:10px 14px;background:rgba(8,22,39,0.9);border-top:2px solid #0e7490;
     display:flex;align-items:center;justify-content:center;gap:8px;
   }
   .genset-card-footer .cb-label {
-    font-size:12px;color:#94a3b8;font-weight:600;
+    font-size:12px;color:#60a5fa;font-weight:600;
   }
   .genset-card-footer .cb-status {
-    font-size:13px;font-weight:700;
+    font-size:13px;font-weight:700;text-shadow:0 0 8px currentColor;
   }
-  .genset-card-footer .cb-status.closed {color:#ef4444;}
-  .genset-card-footer .cb-status.open {color:#22c55e;}
+  .genset-card-footer .cb-status.closed {color:#fca5a5;}
+  .genset-card-footer .cb-status.open {color:#34d399;}
   
   @media (max-width:1200px){.r4{grid-template-columns:repeat(2,1fr)} .r3{grid-template-columns:1fr}}
+  
+  /* One-Line Diagram Animations */
+  .cable-run {
+    transition: stroke 0.4s ease, filter 0.4s ease;
+  }
+  .cable-energized {
+    animation: pulse-cable 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-cable {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(239,68,68,0.6)); }
+    50% { filter: drop-shadow(0 0 8px rgba(239,68,68,0.9)); }
+  }
+  #one-line-svg {
+    transition: all 0.3s ease;
+  }
+  #one-line-svg g[id^="cb-"] {
+    transition: transform 0.2s ease;
+  }
+  #one-line-svg g[id^="cb-"]:hover {
+    transform: scale(1.05);
+  }
 </style>
 </head>
 <body>
 <div class="wrap" id="app">
 
   <!-- HEADER -->
-  <div class="hdr card">
+  <div class="hdr card" style="display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center">
     <div style="display:flex;gap:16px;align-items:center">
       <div class="mode-toggle-container">
         <div id="header-mode-toggle" class="mode-toggle" title="Click to toggle between TEST and LIVE mode">
@@ -207,19 +261,47 @@
           </div>
         </div>
       </div>
-      <span class="caps">Control:</span>
-      <span id="ctrl-mode-label" class="badge ok">AUTO</span>
       <span class="caps">Status:</span>
       <span id="status-badge" class="badge ok">OK</span>
-    </div>
-    <div class="right">
       <span class="sub">Comms: <b id="comms">Modbus OK</b></span>
       <span class="sub">Last Write: <b id="lastwrite">—</b></span>
     </div>
+    
+    <!-- Permissives in Header -->
+    <div style="display:flex;gap:12px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;align-items:center;background:rgba(8,33,57,0.8);padding:6px 12px;border-radius:8px;border:2px solid #0e7490;box-shadow:0 0 10px rgba(6,182,212,0.2)">
+        <span style="color:#60a5fa;font-size:11px;font-weight:600">Gens Online:</span>
+        <b id="gensOnline" style="color:#34d399;font-size:12px;text-shadow:0 0 8px rgba(52,211,153,0.6)">0</b>
+        <span id="p_gens" class="ok" style="font-size:11px">✓</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;background:rgba(8,33,57,0.8);padding:6px 12px;border-radius:8px;border:2px solid #0e7490;box-shadow:0 0 10px rgba(6,182,212,0.2)">
+        <span style="color:#60a5fa;font-size:11px;font-weight:600">Gateway:</span>
+        <span id="p_comms" class="ok" style="font-size:11px">✓</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;background:rgba(8,33,57,0.8);padding:6px 12px;border-radius:8px;border:2px solid #0e7490;box-shadow:0 0 10px rgba(6,182,212,0.2)">
+        <span style="color:#60a5fa;font-size:11px;font-weight:600">Alarms:</span>
+        <span id="p_alarms" class="ok" style="font-size:11px">✓</span>
+      </div>
+      <div id="mode-status-box" style="display:flex;gap:6px;align-items:center;padding:6px 12px;background:rgba(8,22,39,0.9);border-radius:8px;border:2px solid #f59e0b;box-shadow:0 0 10px rgba(245,158,11,0.3)">
+        <span id="mode-status-icon" style="font-size:14px">🔒</span>
+        <span id="mode-status-text" style="font-size:11px;font-weight:700;color:#fbbf24;text-shadow:0 0 8px rgba(251,191,36,0.6)">OUTPUTS DISABLED</span>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="mode-toggle-container">
+        <div id="header-control-toggle" class="control-mode-toggle" title="Click to toggle between AUTO and MANUAL mode">
+          <div class="control-toggle-labels">
+            <span class="label-auto">AUTO</span>
+            <span class="label-manual">MANUAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- TOP ROW: 3 GEN TILES + PERMISSIVES -->
-  <div class="row r4">
+  <!-- TOP ROW: 3 GEN TILES -->
+  <div class="row r3">
     <!-- GEN-1 -->
     <div class="genset-card" id="genset-card-1">
       <div class="genset-card-header">
@@ -294,201 +376,191 @@
         <span id="g3cb" class="cb-status open">OPEN</span>
       </div>
     </div>
+  </div>
 
-    <!-- Permissives -->
-    <div class="card" style="background:#1e293b;border:3px solid #475569">
-      <div class="title" style="color:#e2e8f0;font-size:14px;margin-bottom:12px">Permissives</div>
-      <div class="row-perm" style="color:#cbd5e1">
-        <div>Gens Online: <b id="gensOnline" style="color:#22c55e">0</b> <span id="p_gens" class="ok">✓</span></div>
-        <div>Gateway Healthy: <span id="p_comms" class="ok">✓</span></div>
-        <div style="opacity:0.4">Burn-in Complete: <span id="p_burn" class="bad">✕</span> <span style="color:#64748b">(disabled)</span></div>
-        <div>Alarms: <span id="p_alarms" class="ok">✓</span></div>
-        <div style="opacity:0.4">Available ≥ SP: <span id="p_avail" class="ok">✓</span> <span style="color:#64748b">(disabled)</span></div>
+  <!-- ELECTRICAL ONE-LINE DIAGRAM -->
+  <div class="card" style="margin-top:14px;padding:20px;background:linear-gradient(135deg, #081627 0%, #0c1e33 100%);border:3px solid #0e7490;overflow:visible;box-shadow:0 4px 20px rgba(0,0,0,0.5),0 0 20px rgba(6,182,212,0.15)">
+    <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:0">
+      
+      <!-- SVG Cable Runs and Circuit Breakers - aligned with 3-column grid -->
+      <svg id="one-line-svg" viewBox="0 0 900 180" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <!-- Glow filter for energized state -->
+          <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="glow-green" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- GEN-1 Branch (16.67% = 150) -->
+        <g id="gen1-branch">
+          <path id="cable-g1-h" class="cable-run" d="M420 146 L150 146 L150 130" stroke="#374151" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path id="cable-g1-v" class="cable-run" d="M150 50 L150 10" stroke="#374151" stroke-width="5" stroke-linecap="round"/>
+          
+          <!-- Circuit Breaker G1 - Image -->
+          <image id="cb-g1-img" x="115" y="45" width="70" height="90" href="cb-open-green.png" style="cursor:pointer"/>
+          
+          <circle cx="150" cy="6" r="5" fill="#374151" stroke="#64748b" stroke-width="2"/>
+        </g>
+        
+        <!-- GEN-2 Branch (50% = 450) -->
+        <g id="gen2-branch">
+          <path id="cable-g2-v" class="cable-run" d="M450 50 L450 10" stroke="#374151" stroke-width="5" stroke-linecap="round"/>
+          <path id="cable-g2-h" class="cable-run" d="M450 146 L450 130" stroke="#374151" stroke-width="5" stroke-linecap="round"/>
+          
+          <!-- Circuit Breaker G2 - Image -->
+          <image id="cb-g2-img" x="415" y="45" width="70" height="90" href="cb-open-green.png" style="cursor:pointer"/>
+          
+          <circle cx="450" cy="6" r="5" fill="#374151" stroke="#64748b" stroke-width="2"/>
+        </g>
+        
+        <!-- GEN-3 Branch (83.33% = 750) -->
+        <g id="gen3-branch">
+          <path id="cable-g3-h" class="cable-run" d="M480 146 L750 146 L750 130" stroke="#374151" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path id="cable-g3-v" class="cable-run" d="M750 50 L750 10" stroke="#374151" stroke-width="5" stroke-linecap="round"/>
+          
+          <!-- Circuit Breaker G3 - Image -->
+          <image id="cb-g3-img" x="715" y="45" width="70" height="90" href="cb-open-green.png" style="cursor:pointer"/>
+          
+          <circle cx="750" cy="6" r="5" fill="#374151" stroke="#64748b" stroke-width="2"/>
+        </g>
+        
+        <!-- Main Bus Bar -->
+        <g id="main-bus">
+          <rect x="420" y="140" width="60" height="12" rx="2" fill="#64748b" stroke="#94a3b8" stroke-width="1"/>
+        </g>
+        
+        <!-- Cable from Main Bus to Load Bank -->
+        <path id="lb-to-bus" d="M450 152 L450 175" stroke="#64748b" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      
+      <!-- AUTO MODE: Target Load Controls -->
+      <div id="auto-mode-panel" style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:0;width:100%;position:relative">
+        
+        <!-- Control Row: New Target + Button + Arrow + Load Bank (centered) + Config Cards -->
+        <div style="position:relative;width:100%;min-height:400px">
+          <!-- Left side: New Target Load + Write Button -->
+          <div style="position:absolute;left:272px;top:50%;transform:translateY(calc(-50% - 20px));display:flex;align-items:flex-end;gap:12px;z-index:1">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <label class="sub" style="color:#60a5fa;font-size:12px;font-weight:600">New Target Load</label>
+              <input id="in_target_write" type="number" step="10" min="0" max="5000" style="background:rgba(8,22,39,0.9);font-size:20px;font-weight:700;border:3px solid #0891b2;color:#7dd3fc;text-align:center;width:120px;padding:10px;border-radius:10px;box-shadow:0 0 20px rgba(8,145,178,0.5),inset 0 2px 4px rgba(0,0,0,0.4)" value="0" />
+            </div>
+            <button id="btn_write_target" class="btn" style="background:linear-gradient(135deg,#10b981 0%,#059669 100%);border:none;font-size:14px;font-weight:700;padding:12px 18px;white-space:nowrap;height:52px;border-radius:10px;box-shadow:0 4px 12px rgba(16,185,129,0.4);transition:all 0.2s">
+              Write Target
+            </button>
+          </div>
+          
+          <!-- Arrow Image -->
+          <img src="pngegg.png" alt="Arrow" style="position:absolute;left:572px;top:50%;transform:translateY(calc(-50% - 10px));width:80px;height:auto;filter:drop-shadow(0 2px 8px rgba(16,185,129,0.4));z-index:1"/>
+          
+          <!-- Center: Current Target Load (above) + Load Bank Image - ABSOLUTELY CENTERED -->
+          <div style="position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px">
+            <!-- Current Target Load -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+              <label class="sub" style="color:#60a5fa;font-size:12px;font-weight:600">Current Target Load</label>
+              <input id="in_target_read" type="number" readonly style="background:rgba(8,22,39,0.9);font-size:20px;font-weight:700;border:3px solid #10b981;color:#34d399;text-align:center;width:120px;padding:10px;border-radius:10px;box-shadow:0 0 20px rgba(16,185,129,0.5),inset 0 2px 4px rgba(0,0,0,0.4);text-shadow:0 0 8px rgba(52,211,153,0.6)" value="0" />
+            </div>
+            
+            <!-- Load Bank Image -->
+            <img src="load-bank.png" alt="Load Bank" style="width:180px;height:auto;border-radius:12px;border:4px solid #475569;box-shadow:0 6px 20px rgba(0,0,0,0.5),0 0 20px rgba(34,197,94,0.2)"/>
+            
+            <!-- Load Bank Status Card (moved here) -->
+            <div style="margin-top:12px;padding:14px;background:linear-gradient(135deg, #0c1e33 0%, #081627 100%);border-radius:12px;border:2px solid #0e7490;box-shadow:0 4px 12px rgba(0,0,0,0.4),0 0 20px rgba(6,182,212,0.1);width:350px">
+              <div class="title" style="text-align:center;margin-bottom:12px">Load Bank Status</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div class="k">
+                  <div id="lb_meas" class="big" style="font-size:26px">0 kW</div>
+                  <div class="sub">Measured</div>
+                </div>
+                <div class="k">
+                  <div id="lb_appl" class="big" style="font-size:26px">0 kW</div>
+                  <div class="sub">Applied</div>
+                </div>
+                <div class="k">
+                  <div id="lb_avail" class="big" style="font-size:26px">0 kW</div>
+                  <div class="sub">Available</div>
+                </div>
+                <div class="k">
+                  <div id="lb_sp" class="big" style="font-size:26px">0 kW</div>
+                  <div class="sub">Setpoint</div>
+                </div>
+              </div>
+              <div style="text-align:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(14,116,144,0.3)">
+                <span class="sub" style="color:#60a5fa;font-size:11px"><b id="cfg_status" style="color:#34d399;text-shadow:0 0 8px rgba(52,211,153,0.6)">Ready</b></span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right side: Config Cards (Load Bank Capacity and Gen High Limit) - Side by Side -->
+          <div style="position:absolute;right:60px;top:50%;transform:translateY(calc(-50% - 30px));display:flex;gap:12px">
+            <!-- Load Bank Capacity Card -->
+            <div class="card" style="padding:10px;width:240px">
+              <div class="title" style="margin-bottom:8px;font-size:13px">Load Bank Capacity</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <label class="sub" style="font-size:10px;min-width:50px">Current:</label>
+                <input id="in_lbcap_read" type="number" readonly style="background:rgba(8,22,39,0.6);color:#7dd3fc;border-color:#0e7490;border-width:2px;width:100%;font-size:14px;padding:4px 6px;border-radius:6px" value="0" />
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                <label class="sub" style="font-size:10px;min-width:50px">New:</label>
+                <input id="in_lbcap_write" type="number" step="10" min="0" max="5000" style="width:100%;font-size:14px;padding:4px 6px;border-radius:6px;border-width:2px" value="0" />
+              </div>
+              <button id="btn_write_lbcap" class="btn block" style="font-size:12px;padding:6px;border-radius:6px">Write LB Cap</button>
+            </div>
+
+            <!-- Gen High Limit Card -->
+            <div class="card" style="padding:10px;width:240px">
+              <div class="title" style="margin-bottom:8px;font-size:13px">Gen High Limit</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <label class="sub" style="font-size:10px;min-width:50px">Current:</label>
+                <input id="in_highlim_read" type="number" readonly style="background:rgba(8,22,39,0.6);color:#7dd3fc;border-color:#0e7490;border-width:2px;width:100%;font-size:14px;padding:4px 6px;border-radius:6px" value="0" />
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                <label class="sub" style="font-size:10px;min-width:50px">New:</label>
+                <input id="in_highlim_write" type="number" step="10" min="0" max="5000" style="width:100%;font-size:14px;padding:4px 6px;border-radius:6px;border-width:2px" value="0" />
+              </div>
+              <button id="btn_write_highlim" class="btn block" style="font-size:12px;padding:6px;border-radius:6px">Write High Limit</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- RTAC TEST/LIVE MODE SELECTOR -->
-  <div class="row r3" style="margin-top:14px">
-    <div class="card" style="background:#1e293b;color:#ffffff;border:3px solid #475569">
-      <div class="title" style="color:#94a3b8;font-size:14px;font-weight:600;text-align:center;margin-bottom:16px">RTAC OUTPUT MODE</div>
-      <div style="display:grid;gap:16px">
-        <div id="panel-mode-toggle" class="mode-toggle-lg" title="Click to toggle between TEST and LIVE mode">
-          <div class="mode-toggle-labels">
-            <span class="label-test">🔒 TEST</span>
-            <span class="label-live">⚡ LIVE</span>
-          </div>
-        </div>
-        <div id="mode-status-box" style="padding:14px;background:#0f172a;border-radius:12px;text-align:center;border:2px solid #f59e0b">
-          <div id="mode-status-icon" style="font-size:28px;margin-bottom:6px">🔒</div>
-          <div id="mode-status-text" style="font-size:14px;font-weight:700;color:#f59e0b">OUTPUTS DISABLED</div>
-          <div id="mode-status-desc" style="font-size:11px;color:#94a3b8;margin-top:4px">Safe for testing - no commands sent</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CONTROL MODE SELECTOR -->
-    <div class="card" style="background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);color:#ffffff;border:3px solid #e14eca">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">⚙️ Control Mode Selector</div>
-      <div style="display:grid;gap:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <button id="btn-mode-auto" class="btn" style="background:#10b981;border-color:#059669;font-size:14px;font-weight:700">
-            AUTO Mode
-          </button>
-          <button id="btn-mode-manual" class="btn secondary" style="font-size:14px;font-weight:700">
-            MANUAL Mode
-          </button>
-        </div>
-        <div style="padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
-          <div class="sub" style="color:#ffffff;font-size:11px">
-            <b>AUTO:</b> System automatically maintains generator target kW<br>
-            <b>MANUAL:</b> You directly control the load bank setpoint
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AUTO MODE PANEL -->
-  <div id="auto-mode-panel" class="row r3" style="margin-top:14px">
-    <div class="card" style="grid-column:span 2;background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#ffffff;border:3px solid #5568d3">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎯 Target Gen kW - AUTO MODE CONTROL</div>
-      <div class="controls">
-        <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">Current Target (Read from RTAC)</label>
-          <input id="in_target_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
-        </div>
-        <div class="ctrl">
-          <label class="sub" style="color:#e0e7ff">New Target (Write to RTAC)</label>
-          <input id="in_target_write" type="number" step="10" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #4c51bf" value="0" />
-        </div>
-      </div>
-      <button id="btn_write_target" class="btn block" style="margin-top:12px;background:#10b981;border-color:#059669;font-size:16px;font-weight:700;padding:12px">
-        ✓ Write Target Gen kW
-      </button>
-      <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
-        <div class="sub" style="color:#e0e7ff">Last Write: <b id="cfg_lastwrite" style="color:#ffffff">—</b></div>
-        <div class="sub" style="color:#e0e7ff">Status: <b id="cfg_status" style="color:#ffffff">Ready</b></div>
-      </div>
-    </div>
-
-    <!-- LOAD BANK PANEL -->
-    <div class="card">
-      <div class="title">Load Bank Status</div>
-      <div class="kv">
-        <div class="k">
-          <div id="lb_meas" class="big">0 kW</div>
-          <div class="sub">Measured</div>
-        </div>
-        <div class="k">
-          <div id="lb_appl" class="big">0 kW</div>
-          <div class="sub">Applied</div>
-        </div>
-        <div class="k">
-          <div id="lb_avail" class="big">0 kW</div>
-          <div class="sub">Available</div>
-        </div>
-        <div class="k">
-          <div id="lb_sp" class="big">0 kW</div>
-          <div class="sub">Setpoint</div>
-        </div>
-        </div>
-      </div>
-    </div>
 
   <!-- MANUAL MODE PANEL -->
   <div id="manual-mode-panel" class="row r3" style="margin-top:14px;display:none">
-    <div class="card" style="grid-column:span 2;background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);color:#ffffff;border:3px solid #e14eca">
-      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700">🎛️ Manual Load Bank Control - DIRECT SETPOINT</div>
+    <div class="card" style="grid-column:span 3;background:linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);color:#ffffff;border:3px solid #a855f7;box-shadow:0 4px 20px rgba(124,58,237,0.4);max-width:600px;margin:0 auto">
+      <div class="title" style="color:#ffffff;font-size:16px;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.4)">🎛️ Manual Load Bank Control - DIRECT SETPOINT</div>
       <div class="controls">
         <div class="ctrl">
           <label class="sub" style="color:#e0e7ff">Current Setpoint (Read from RTAC)</label>
-          <input id="in_manual_sp_read" type="number" readonly style="background:#f7fafc;font-size:18px;font-weight:700;border:2px solid #cbd5e0" value="0" />
+          <input id="in_manual_sp_read" type="number" readonly style="background:rgba(8,22,39,0.8);font-size:18px;font-weight:700;border:2px solid #0e7490;color:#7dd3fc" value="0" />
         </div>
         <div class="ctrl">
           <label class="sub" style="color:#e0e7ff">New Setpoint (Write to RTAC)</label>
-          <input id="in_manual_sp_write" type="number" step="50" min="0" max="5000" style="font-size:18px;font-weight:700;border:2px solid #c026d3" value="0" />
+          <input id="in_manual_sp_write" type="number" step="50" min="0" max="5000" style="background:rgba(8,22,39,0.8);font-size:18px;font-weight:700;border:2px solid #c026d3;color:#e0f2fe" value="0" />
         </div>
       </div>
-      <button id="btn_write_manual_sp" class="btn block" style="margin-top:12px;background:#10b981;border-color:#059669;font-size:16px;font-weight:700;padding:12px">
+      <button id="btn_write_manual_sp" class="btn block" style="margin-top:12px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);border:none;font-size:16px;font-weight:700;padding:12px;box-shadow:0 4px 12px rgba(16,185,129,0.5)">
         ✓ Write Manual Setpoint
       </button>
-      <div style="margin-top:10px;padding:10px;background:rgba(255,255,255,0.15);border-radius:8px;backdrop-filter:blur(10px)">
-        <div class="sub" style="color:#ffffff"><b>⚠️ MANUAL MODE:</b> You are directly controlling the load bank.</div>
+      <div style="margin-top:10px;padding:10px;background:rgba(8,22,39,0.4);border-radius:8px;backdrop-filter:blur(10px);border:1px solid rgba(224,242,254,0.2)">
+        <div class="sub" style="color:#ffffff;text-shadow:0 1px 4px rgba(0,0,0,0.3)"><b>⚠️ MANUAL MODE:</b> You are directly controlling the load bank.</div>
         <div class="sub" style="color:#e0e7ff;font-size:11px">Valid range: 0 to <b id="manual_sp_max">2000</b> kW (based on available capacity)</div>
       </div>
     </div>
-
-    <!-- LOAD BANK PANEL (duplicate for manual mode) -->
-    <div class="card">
-      <div class="title">Load Bank Status</div>
-      <div class="kv">
-        <div class="k">
-          <div id="lb_meas2" class="big">0 kW</div>
-          <div class="sub">Measured</div>
-        </div>
-        <div class="k">
-          <div id="lb_appl2" class="big">0 kW</div>
-          <div class="sub">Applied</div>
-        </div>
-        <div class="k">
-          <div id="lb_avail2" class="big">0 kW</div>
-          <div class="sub">Available</div>
-        </div>
-        <div class="k">
-          <div id="lb_sp2" class="big">0 kW</div>
-          <div class="sub">Setpoint</div>
-        </div>
-      </div>
-    </div>
   </div>
 
-  <!-- BOTTOM ROW: LOAD BANK CAP + HIGH LIMIT -->
-  <div class="row r3" style="margin-top:14px">
-    <div class="card">
-      <div class="title">Load Bank Capacity</div>
-      <div class="controls">
-        <div class="ctrl">
-          <label class="sub">Current Value (Read)</label>
-          <input id="in_lbcap_read" type="number" readonly style="background:#f0f0f0" value="0" />
-        </div>
-        <div class="ctrl">
-          <label class="sub">New Value (Write)</label>
-          <input id="in_lbcap_write" type="number" step="10" min="0" max="5000" value="0" />
-        </div>
-      </div>
-      <button id="btn_write_lbcap" class="btn block" style="margin-top:10px">Write LB Cap</button>
-    </div>
-
-    <div class="card">
-      <div class="title">Gen High Limit</div>
-      <div class="controls">
-        <div class="ctrl">
-          <label class="sub">Current Limit (Read)</label>
-          <input id="in_highlim_read" type="number" readonly style="background:#f0f0f0" value="0" />
-        </div>
-        <div class="ctrl">
-          <label class="sub">New Limit (Write)</label>
-          <input id="in_highlim_write" type="number" step="10" min="0" max="5000" value="0" />
-        </div>
-      </div>
-      <button id="btn_write_highlim" class="btn block" style="margin-top:10px">Write High Limit</button>
-    </div>
-
-    <div class="card" style="background:#f8fafc;border:2px dashed #cbd5e0">
-      <div class="title" style="color:#64748b">Control Status</div>
-      <div style="padding:12px;display:grid;gap:8px">
-        <div class="tile">
-          <div class="sub">Last Write</div>
-          <div style="font-weight:600;color:#1a202c"><span id="cfg_lastwrite2">—</span></div>
-        </div>
-        <div class="tile">
-          <div class="sub">Write Status</div>
-          <div style="font-weight:600;color:#1a202c"><span id="cfg_status2">Ready</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </div>
 
@@ -584,14 +656,66 @@ const ts=()=>new Date().toISOString().replace("T"," ").slice(0,19)+"Z";
 /* ============================== UI BINDINGS ============================== */
 const $ = (id)=>document.getElementById(id);
 
-function paint() {
-  // Control mode indicator
-  const ctrlModeLabel = $("ctrl-mode-label");
-  if (ctrlModeLabel) {
-    ctrlModeLabel.textContent = s.controlMode ? "AUTO" : "MANUAL";
-    ctrlModeLabel.className = "badge " + (s.controlMode ? "ok" : "warn");
-  }
+/* ============================== ONE-LINE DIAGRAM ============================== */
+function updateOneLine() {
+  const breakers = [
+    { id: 'g1', closed: s.gen.g1_52A },
+    { id: 'g2', closed: s.gen.g2_52A },
+    { id: 'g3', closed: s.gen.g3_52A }
+  ];
   
+  breakers.forEach(({ id, closed }) => {
+    // Update circuit breaker image
+    const cbImg = document.getElementById(`cb-${id}-img`);
+    if (cbImg) {
+      cbImg.setAttribute('href', closed ? 'cb-closed-red.png' : 'cb-open-green.png');
+      cbImg.style.filter = closed ? 'drop-shadow(0 0 8px rgba(239,68,68,0.6))' : 'drop-shadow(0 0 8px rgba(34,197,94,0.4))';
+    }
+    
+    // Update cable colors
+    const cableColor = closed ? '#ef4444' : '#374151';
+    
+    // Vertical cable
+    const cableV = document.getElementById(`cable-${id}-v`);
+    if (cableV) {
+      cableV.setAttribute('stroke', cableColor);
+      cableV.classList.toggle('cable-energized', closed);
+    }
+    
+    // Horizontal cable
+    const cableH = document.getElementById(`cable-${id}-h`);
+    if (cableH) {
+      cableH.setAttribute('stroke', cableColor);
+      cableH.classList.toggle('cable-energized', closed);
+    }
+    
+    // Connection dot at genset
+    const branchGroup = document.getElementById(`${id.replace('g', 'gen')}-branch`);
+    if (branchGroup) {
+      const connDot = branchGroup.querySelector('circle');
+      if (connDot) {
+        connDot.setAttribute('fill', cableColor);
+        connDot.setAttribute('stroke', closed ? '#fca5a5' : '#64748b');
+      }
+    }
+  });
+  
+  // Update main bus bar color based on any closed breaker
+  const anyEnergized = s.gen.g1_52A || s.gen.g2_52A || s.gen.g3_52A;
+  const mainBus = document.querySelector('#main-bus rect');
+  const lbToBus = document.getElementById('lb-to-bus');
+  if (mainBus) {
+    mainBus.setAttribute('fill', anyEnergized ? '#ef4444' : '#64748b');
+    mainBus.setAttribute('stroke', anyEnergized ? '#fca5a5' : '#94a3b8');
+    mainBus.classList.toggle('cable-energized', anyEnergized);
+  }
+  if (lbToBus) {
+    lbToBus.setAttribute('stroke', anyEnergized ? '#ef4444' : '#64748b');
+    lbToBus.classList.toggle('cable-energized', anyEnergized);
+  }
+}
+
+function paint() {
   const statusBadge = $("status-badge");
   if (statusBadge) {
     statusBadge.className = "badge " + (s.commsOK && s.alarms.length===0 ? "ok" : (s.commsOK ? "warn" : "bad"));
@@ -637,6 +761,9 @@ function paint() {
     if (pctEl) pctEl.textContent = Math.round(100*kw/lim)+"%";
   });
 
+  // Update One-Line Diagram - Cable runs and circuit breakers
+  updateOneLine();
+
   // permissives - ACTIVE
   const gensOnline = (s.gen.g1_52A?1:0)+(s.gen.g2_52A?1:0)+(s.gen.g3_52A?1:0);
   const gensOnlineEl = $("gensOnline");
@@ -675,7 +802,7 @@ function paint() {
   const autoPanel = $("auto-mode-panel");
   const manualPanel = $("manual-mode-panel");
   
-  if (autoPanel) autoPanel.style.display = s.controlMode ? "block" : "none";
+  if (autoPanel) autoPanel.style.display = s.controlMode ? "flex" : "none";
   if (manualPanel) manualPanel.style.display = s.controlMode ? "none" : "block";
   
   // Manual setpoint display
@@ -685,44 +812,23 @@ function paint() {
   const manualSpMax = $("manual_sp_max");
   if (manualSpMax) manualSpMax.textContent = s.cfg.maxLB_kW || 2000;
 
-  // Load bank (duplicate displays for manual mode)
-  const lb2Meas = $("lb_meas2");
-  const lb2Appl = $("lb_appl2");
-  const lb2Avail = $("lb_avail2");
-  const lb2Sp = $("lb_sp2");
-  if (lb2Meas) lb2Meas.textContent = s.lb.measured_kW + " kW";
-  if (lb2Appl) lb2Appl.textContent = s.lb.applied_kW + " kW";
-  if (lb2Avail) lb2Avail.textContent = s.lb.available_kW + " kW";
-  if (lb2Sp) lb2Sp.textContent = s.lb.setpoint_kW + " kW";
 
-  // Update mode button styling
-  const btnModeAuto = $("btn-mode-auto");
-  const btnModeManual = $("btn-mode-manual");
-  if (btnModeAuto) {
-    btnModeAuto.className = s.controlMode ? "btn" : "btn secondary";
-    btnModeAuto.style.background = s.controlMode ? "#10b981" : "#718096";
-    btnModeAuto.style.borderColor = s.controlMode ? "#059669" : "#4a5568";
-  }
-  if (btnModeManual) {
-    btnModeManual.className = s.controlMode ? "btn secondary" : "btn";
-    btnModeManual.style.background = s.controlMode ? "#718096" : "#dc2626";
-    btnModeManual.style.borderColor = s.controlMode ? "#4a5568" : "#991b1b";
-  }
 
   // Update Test/Live toggle switches
   const headerToggle = $("header-mode-toggle");
-  const panelToggle = $("panel-mode-toggle");
   const modeStatusBox = $("mode-status-box");
   const modeStatusIcon = $("mode-status-icon");
   const modeStatusText = $("mode-status-text");
-  const modeStatusDesc = $("mode-status-desc");
   
   // Update toggle visual state
   if (headerToggle) {
     headerToggle.classList.toggle("live", !s.testMode);
   }
-  if (panelToggle) {
-    panelToggle.classList.toggle("live", !s.testMode);
+  
+  // Update Control Mode toggle (Auto/Manual)
+  const headerControlToggle = $("header-control-toggle");
+  if (headerControlToggle) {
+    headerControlToggle.classList.toggle("manual", !s.controlMode);
   }
   
   // Update status box
@@ -734,7 +840,6 @@ function paint() {
         modeStatusText.textContent = "OUTPUTS DISABLED";
         modeStatusText.style.color = "#f59e0b";
       }
-      if (modeStatusDesc) modeStatusDesc.textContent = "Safe for testing - no commands sent";
     } else {
       modeStatusBox.style.borderColor = "#22c55e";
       if (modeStatusIcon) modeStatusIcon.textContent = "⚡";
@@ -742,7 +847,6 @@ function paint() {
         modeStatusText.textContent = "OUTPUTS ENABLED";
         modeStatusText.style.color = "#22c55e";
       }
-      if (modeStatusDesc) modeStatusDesc.textContent = "LIVE - Commands sent to load bank";
     }
   }
 }
@@ -843,37 +947,29 @@ function stopBackendSync() {
 async function writeConfigValue(tagName, inputId, statusId) {
   const inputEl = $(inputId);
   const statusEl = $(statusId || "cfg_status");
-  const statusEl2 = $("cfg_status2");
   const lastWriteEl = $("cfg_lastwrite");
-  const lastWriteEl2 = $("cfg_lastwrite2");
   
   if (!inputEl) return;
   
   const value = parseInt(inputEl.value);
   if (isNaN(value) || value < 0) {
     if (statusEl) statusEl.textContent = "Invalid value";
-    if (statusEl2) statusEl2.textContent = "Invalid value";
     return;
   }
   
   if (statusEl) statusEl.textContent = "Writing...";
-  if (statusEl2) statusEl2.textContent = "Writing...";
   
   try {
     await writeTag(tagName, value);
     const timestamp = ts();
     if (statusEl) statusEl.textContent = "Write OK ✓";
-    if (statusEl2) statusEl2.textContent = "Write OK ✓";
     if (lastWriteEl) lastWriteEl.textContent = timestamp;
-    if (lastWriteEl2) lastWriteEl2.textContent = timestamp;
     setTimeout(() => { 
       if (statusEl) statusEl.textContent = "Ready"; 
-      if (statusEl2) statusEl2.textContent = "Ready";
     }, 2000);
   } catch (err) {
     console.error(err);
     if (statusEl) statusEl.textContent = "Write Failed: " + err.message;
-    if (statusEl2) statusEl2.textContent = "Write Failed";
     pushAlarm(`Config write failed: ${err.message}`);
   }
 }
@@ -907,12 +1003,9 @@ async function setControlMode(isAuto) {
     
     // Show notification
     const statusEl = $("cfg_status");
-    const statusEl2 = $("cfg_status2");
     if (statusEl) statusEl.textContent = `Switched to ${isAuto ? 'AUTO' : 'MANUAL'} mode ✓`;
-    if (statusEl2) statusEl2.textContent = `Switched to ${isAuto ? 'AUTO' : 'MANUAL'} mode ✓`;
     setTimeout(() => {
       if (statusEl) statusEl.textContent = "Ready";
-      if (statusEl2) statusEl2.textContent = "Ready";
     }, 3000);
   } catch (err) {
     console.error("Mode change failed:", err);
@@ -920,22 +1013,28 @@ async function setControlMode(isAuto) {
   }
 }
 
-const btnModeAuto = $("btn-mode-auto");
-const btnModeManual = $("btn-mode-manual");
-
-if (btnModeAuto) {
-  btnModeAuto.onclick = () => setControlMode(true);
+// Control mode toggle click handler
+function handleControlModeToggleClick() {
+  if (s.controlMode) {
+    // Currently in AUTO mode, switching to MANUAL - show confirmation
+    if (confirm("⚠️ WARNING: Switching to MANUAL mode gives you direct control of the load bank setpoint.\n\nAre you sure you want to proceed?")) {
+      setControlMode(false);
+    }
+  } else {
+    // Currently in MANUAL mode, switching to AUTO - no confirmation needed
+    setControlMode(true);
+  }
 }
 
-if (btnModeManual) {
-  btnModeManual.onclick = () => setControlMode(false);
+const headerControlToggle = $("header-control-toggle");
+if (headerControlToggle) {
+  headerControlToggle.onclick = handleControlModeToggleClick;
 }
 
 // Manual setpoint write
 async function writeManualSetpoint() {
   const inputEl = $("in_manual_sp_write");
   const statusEl = $("cfg_status");
-  const statusEl2 = $("cfg_status2");
   
   if (!inputEl) return;
   
@@ -944,38 +1043,30 @@ async function writeManualSetpoint() {
   
   if (isNaN(value) || value < 0) {
     if (statusEl) statusEl.textContent = "Invalid value (must be ≥ 0)";
-    if (statusEl2) statusEl2.textContent = "Invalid value";
     return;
   }
   
   if (value > maxAllowed) {
     if (statusEl) statusEl.textContent = `Value exceeds max (${maxAllowed} kW)`;
-    if (statusEl2) statusEl2.textContent = "Value exceeds max";
     return;
   }
   
   if (statusEl) statusEl.textContent = "Writing manual setpoint...";
-  if (statusEl2) statusEl2.textContent = "Writing...";
   
   try {
     await writeTag("HMI_Modbus_Server_Tags_Manual_Load_Bank_SP_Input", value); // Register 15
     const timestamp = ts();
     if (statusEl) statusEl.textContent = `Manual SP written: ${value} kW ✓`;
-    if (statusEl2) statusEl2.textContent = "Write OK ✓";
     
     const lastWriteEl = $("cfg_lastwrite");
-    const lastWriteEl2 = $("cfg_lastwrite2");
     if (lastWriteEl) lastWriteEl.textContent = timestamp;
-    if (lastWriteEl2) lastWriteEl2.textContent = timestamp;
     
     setTimeout(() => {
       if (statusEl) statusEl.textContent = "Ready";
-      if (statusEl2) statusEl2.textContent = "Ready";
     }, 3000);
   } catch (err) {
     console.error("Manual setpoint write failed:", err);
     if (statusEl) statusEl.textContent = "Write Failed: " + err.message;
-    if (statusEl2) statusEl2.textContent = "Write Failed";
     pushAlarm(`Manual setpoint write failed: ${err.message}`);
   }
 }
@@ -999,13 +1090,10 @@ async function setTestMode(isTest) {
     
     // Show notification
     const statusEl = $("cfg_status");
-    const statusEl2 = $("cfg_status2");
     const msg = isTest ? 'Switched to TEST mode (outputs disabled) ⚠️' : 'Switched to LIVE mode (outputs enabled) ✓';
     if (statusEl) statusEl.textContent = msg;
-    if (statusEl2) statusEl2.textContent = isTest ? 'TEST mode' : 'LIVE mode';
     setTimeout(() => {
       if (statusEl) statusEl.textContent = "Ready";
-      if (statusEl2) statusEl2.textContent = "Ready";
     }, 3000);
   } catch (err) {
     console.error("Test mode change failed:", err);
@@ -1027,14 +1115,9 @@ function handleModeToggleClick() {
 }
 
 const headerModeToggle = $("header-mode-toggle");
-const panelModeToggle = $("panel-mode-toggle");
 
 if (headerModeToggle) {
   headerModeToggle.onclick = handleModeToggleClick;
-}
-
-if (panelModeToggle) {
-  panelModeToggle.onclick = handleModeToggleClick;
 }
 
 /* ============================ INITIALIZATION ============================ */
